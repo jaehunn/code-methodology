@@ -140,7 +140,7 @@ function cover(board) {
   return result;
 }
 
-// Traveling Salesman Problem: TSP
+// 4. Traveling Salesman Problem: TSP
 const CITYS;
 const DISTS = [CITYS][CITYS]; // [start][end] = distance
 
@@ -174,7 +174,7 @@ function shortestPath(paths, visited, currentLength) {
   return result;
 }
 
-// Clock Sync
+// 5. Clock Sync
 const SWITCH = 10;
 const CLOCKS = 16;
 const LINKED = [[]]; // !![i][j]: Switch 'i' Linked Clock 'j'
@@ -213,3 +213,97 @@ function solve(clocks, swtch) {
   return result;
 }
 
+// 6. Power set
+function powerSet(originalSet) {
+  return powerSetRecur(originalSet);
+}
+
+function powerSetRecur(originalSet, allSubSets = [[]], currentSubSet = [], startAt = 0) {
+  for (let position = startAt; position < originalSet.length; position += 1) {
+    currentSubSet.push(originalSet[position]);
+
+    allSubSets.push([...currentSubSet]); // { -, ...currentSubSet }
+
+    powerSetRecur(originalSet, allSubSets, currentSubSet, position + 1);
+
+    currentSubSet.pop();
+  }
+
+  return allSubSets;
+}
+
+// 7-1. Permutation
+function permutation(options) {
+  if (options.length === 1) return [options];
+
+  const result = [];
+
+  const smalls = permutation(options.slice(1)); // [b, c], [c, b]
+
+  const firstOption = options[0]; // a
+
+  for (let targetIndex = 0; targetIndex < small.length; targetIndex += 1) {
+    const small = smalls[targetIndex];
+
+    for (let index = 0; index <= small.length; index += 1) {
+      const prefix = small.slice(0, index);
+      const suffix = small.slice(index);
+
+      result.push(prefix.concat([firstOption], suffix));
+    }
+  }
+
+  return result;
+}
+
+// 7-2. Permutation Repetition
+function permutationRepet(options, len = options.length) {
+  if (len === 1)  
+    return options.map(option => [option]);
+
+  const result = [];
+
+  const smalls = permutationRepet(options, len - 1);
+
+  options.forEach(option => {
+    smalls.forEach(small => {
+      result.push([option].concat(small));
+    })
+  })
+
+  return result;
+}
+
+// 8-1 Combination 
+function combination(options, len) {
+  if (len === 1) return options.map(option => [option]);
+
+  const result = [];
+
+  options.forEach((option, index) => {
+    const smalls = combination(options.slice(index + 1), len - 1)
+
+    smalls.forEach(small => {
+      result.push([option].concat(small))
+    })
+  })
+
+  return result;
+}
+
+// 8-1 Combination Repetition
+function combinationRepet(options, len) {
+  if (len === 1) return options.map(option => [option]);
+
+  const result = [];
+
+  options.forEach((option, index) => {
+    const smalls = combinationRepet(options.slice(index), len - 1);
+
+    smalls.forEach(small => {
+      result.push([option].concat(small))
+    })
+  })
+
+  return result;
+}

@@ -1,15 +1,14 @@
 const dx = [-1, -1, -1, 1, 1, 1, 0, 0];
 const dy = [-1, 0, 1, -1, 0, 1, -1, 1];
 
-// validation
 function isRange(x, y) {
   if (x < 0 || y < 0 || x > matrix[0].length || y > matrix.length) return false;
 
   return true;
 }
 
+// (x, y) start from center point
 function searchWord(x, y, words = "") {
-  // range
   if (!isRange(x, y)) return false;
 
   if (board[x][y] !== words[0]) return false;

@@ -1,34 +1,35 @@
-function movingAverage(items, count) {
+function movingAverage(items, average) {
   const result = [];
 
-  for (let targetIndex = count - 1; targetIndex < items.length; index += 1) {
+  for (let targetIndex = average - 1; targetIndex < items.length; index += 1) {
     let targetSum = 0;
 
-    for (let index = 0; index < count; index += 1) {
+    for (let index = 0; index < average; index += 1) {
       targetSum += items[targetIndex - index];
     }
 
-    result.push(targetSum / count);
+    result.push(targetSum / average);
   }
 
   return result;
 }
 
-function betterMovingAverage(items, count) {
+// optimization
+function betterMovingAverage(items, average) {
   const result = [];
 
   let partialSum = 0;
 
-  for (let index = 0; index < count - 1; index += 1) {
+  for (let index = 0; index < average - 1; index += 1) {
     partialSum += items[index];
   }
 
-  for (let index = count - 1; index < items.length; index += 1) {
+  for (let index = average - 1; index < items.length; index += 1) {
     partialSum += items[index];
 
-    result.push(partialSum / count);
+    result.push(partialSum / average);
 
-    partialSum -= items[index - (count - 1)];
+    partialSum -= items[index - (average - 1)];
   }
 
   return result;

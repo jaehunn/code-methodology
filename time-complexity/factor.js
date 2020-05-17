@@ -5,9 +5,9 @@ function factor(value) {
 
   for (let division = 2; value > 1; division += 1) {
     while (value % division === 0) {
-      value /= division;
-
       result.push(division);
+
+      value /= division;
     }
   }
 

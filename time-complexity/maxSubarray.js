@@ -1,5 +1,6 @@
+// searching for all subarray
 function maxSubarray(items) {
-  let result;
+  let result = -1;
 
   for (let startIndex = 0; startIndex < items.length; startIndex += 1) {
     for (let endIndex = startIndex; endIndex < items.length; endIndex += 1) {
@@ -20,6 +21,7 @@ function maxSubarray(items) {
   return result;
 }
 
+// optimization
 function betterMaxSubarray(items) {
   let result;
 
@@ -36,10 +38,11 @@ function betterMaxSubarray(items) {
   return result;
 }
 
+// divide and conquer
 function divideAndConquerMaxSubarray(items, start, end) {
-  if (start >= end) return items[start];
+  if (start === end) return items[start];
 
-  let middle = (start + end) / 2;
+  let middle = Math.floor((start + end) / 2);
 
   let leftMax = 0;
   let rightMax = 0;
@@ -61,8 +64,10 @@ function divideAndConquerMaxSubarray(items, start, end) {
 
   let singleSide = Math.max(
     divideAndConquerMaxSubarray(items, start, middle),
-    divideAndConquerMaxSubarray(items, moddle + 1, end)
+    divideAndConquerMaxSubarray(items, middle + 1, end)
   );
+
+  return Math.max(leftMax + rightMax, singleSide);
 }
 
 function folmulaMaxSubarray(items) {

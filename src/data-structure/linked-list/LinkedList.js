@@ -1,4 +1,4 @@
-class LinkedListNode {
+export class LinkedListNode {
   constructor(value, next = null) {
     this.value = value;
     this.next = next;
@@ -9,7 +9,7 @@ class LinkedListNode {
   }
 }
 
-class LinkedList {
+export default class LinkedList {
   constructor() {
     this.head = null;
     this.tail = null;
@@ -73,6 +73,47 @@ class LinkedList {
     return deletedNode;
   }
 
+  // use stack
+  deleteHead() {
+    if (!this.head) return null;
+
+    const deletedNode = this.head;
+
+    if (this.head.next) {
+      this.head = this.head.next; // change
+    } else {
+      this.head = null;
+      this.tail = null;
+    }
+
+    return deletedNode;
+  }
+
+  // use queue
+  deleteTail() {
+    const deletedNode = this.tail;
+
+    if ((this.head = this.tail)) {
+      this.head = null;
+      this.tail = null;
+
+      return deletedNode;
+    }
+
+    let currentNode = this.head; // target
+    while (currentNode.next) {
+      if (!currentNode.next.next) {
+        currentNode.next = null;
+      } else {
+        currentNode = currentNode.next;
+      }
+    }
+
+    this.tail = currentNode;
+
+    return deletedNode;
+  }
+
   find({ value = undefined, callback = undefined }) {
     if (!this.head) return null;
 
@@ -112,5 +153,18 @@ class LinkedList {
     this.head = prevNode;
 
     return this;
+  }
+
+  toArray() {
+    const nodes = [];
+
+    let currentNode = this.head; // target
+    while (currentNode) {
+      nodes.push(currentNode);
+
+      currentNode = currentNode.next; // move
+    }
+
+    return nodes;
   }
 }

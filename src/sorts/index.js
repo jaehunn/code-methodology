@@ -1,54 +1,6 @@
 /**
  *
  * @param {number[]} originalItems
- * @return {number[]}
- *
- **/
-function selectionSort(originalItems) {
-  const items = [...originalItems];
-
-  for (let targetIndex = 0; targetIndex < items.length - 1; targetIndex += 1) {
-    let minIndex = targetIndex;
-
-    for (let index = targetIndex + 1; index < items.length; index += 1) {
-      if (items[targetIndex] > items[index]) {
-        minIndex = index;
-      }
-    }
-
-    if (items[targetIndex] !== items[minIndex]) {
-      [items[targetIndex], items[minIndex]] = [items[minIndex], items[targetIndex]];
-    }
-  }
-
-  return items;
-}
-
-/**
- *
- * @param {number[]} originalItems
- * @return {number}
- *
- **/
-function insertionSort(originalItems) {
-  const items = [...originalItems];
-
-  for (let index = 0; index < items.length; index += 1) {
-    let targetIndex = index;
-
-    while (targetIndex > 0 && items[targetIndex] < items[targetIndex - 1]) {
-      [items[targetIndex], items[targetIndex - 1]] = [items[targetIndex - 1], items[targetIndex]];
-
-      targetIndex -= 1;
-    }
-  }
-
-  return items;
-}
-
-/**
- *
- * @param {number[]} originalItems
  * @return {number}
  *
  **/

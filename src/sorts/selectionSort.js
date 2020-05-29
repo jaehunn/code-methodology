@@ -1,28 +1,12 @@
-// original, increase
-function selectionSort(originalItems) {
-  const items = [...originalItems];
-
-  for (let targetIndex = 0; targetIndex < items.length - 1; targetIndex += 1) {
-    let minIndex = targetIndex;
-
-    for (let index = targetIndex + 1; index < items.length; index += 1) {
-      if (items[targetIndex] > items[index]) {
-        minIndex = index;
-      }
-    }
-
-    if (targetIndex !== minIndex) {
-      [items[targetIndex], items[minIndex]] = [items[minIndex], items[targetIndex]];
-    }
+function _each(items, callback, len = items.length) {
+  for (let index = 0; index < len; index += 1) {
+    callback(items[index], index);
   }
 
   return items;
 }
 
-// Functional Programming
-
-// Absctraction: if condition
-function _selectionSort(originalItems, comparator) {
+function selectionSort(originalItems, comparator) {
   const items = [...originalItems];
 
   for (let index = 0; index < items.length; index += 1) {
@@ -33,7 +17,7 @@ function _selectionSort(originalItems, comparator) {
         targetIndex = currentIndex;
       }
     }
-    // swap
+
     if (targetIndex !== index) {
       [items[targetIndex], items[index]] = [items[index], items[targetIndex]];
     }
@@ -42,11 +26,32 @@ function _selectionSort(originalItems, comparator) {
   return items;
 }
 
-const ascending = (value, other) => {
-  return value > other;
-};
+function _selectionSort(items, comparator) {
+  _each(items, function (value, index) {
+    let targetIndex = index;
 
-// descending
-const descending = (value, other) => {
-  return value < other;
-};
+    _each(items, function (currentValue, currentIndex) {
+      if (comparator(items[targetIndex], items[currentIndex])) {
+        targetIndex = currentIndex;
+      }
+    });
+
+    if (targetIndex !== index) {
+      console.log(items);
+
+      [items[targetIndex], items[index]] = [items[index], items[targetIndex]];
+
+      console.log(targetIndex, index, items);
+    }
+  });
+}
+
+const list = [5, 2, 3, 4, 1];
+
+console.log(
+  _selectionSort(list, function (target, value) {
+    return target > value;
+  })
+);
+
+console.log(list);

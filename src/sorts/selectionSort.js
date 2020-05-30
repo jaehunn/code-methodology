@@ -1,12 +1,4 @@
-function _each(items, callback, len = items.length) {
-  for (let index = 0; index < len; index += 1) {
-    callback(items[index], index);
-  }
-
-  return items;
-}
-
-function selectionSort(originalItems, comparator) {
+function _selectionSort(originalItems, comparator) {
   const items = [...originalItems];
 
   for (let index = 0; index < items.length; index += 1) {
@@ -26,32 +18,7 @@ function selectionSort(originalItems, comparator) {
   return items;
 }
 
-function _selectionSort(items, comparator) {
-  _each(items, function (value, index) {
-    let targetIndex = index;
+const ascending = (target, value) => target > value;
+const descending = (target, value) => target < value;
 
-    _each(items, function (currentValue, currentIndex) {
-      if (comparator(items[targetIndex], items[currentIndex])) {
-        targetIndex = currentIndex;
-      }
-    });
-
-    if (targetIndex !== index) {
-      console.log(items);
-
-      [items[targetIndex], items[index]] = [items[index], items[targetIndex]];
-
-      console.log(targetIndex, index, items);
-    }
-  });
-}
-
-const list = [5, 2, 3, 4, 1];
-
-console.log(
-  _selectionSort(list, function (target, value) {
-    return target > value;
-  })
-);
-
-console.log(list);
+console.log(_selectionSort([4, 5, 2, 3, 1], ascending));

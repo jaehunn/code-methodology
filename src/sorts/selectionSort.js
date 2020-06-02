@@ -17,8 +17,3 @@ function _selectionSort(originalItems, comparator) {
 
   return items;
 }
-
-const ascending = (target, value) => target > value;
-const descending = (target, value) => target < value;
-
-console.log(_selectionSort([4, 5, 2, 3, 1], ascending));

@@ -6,8 +6,6 @@
   - Stack / Queue
   - Hash
   - Heap
-  - Tree
-  - Graph
 - Sorting
   - Selection
   - Insertion
@@ -21,6 +19,8 @@
   - Doubly Linked List
   - Priority Queue
   - Trie
+  - Tree
+  - Graph
 - Breath / Depth First Search
 - Recursion (Brute Force / Divide and Conquer / Dynamic Programming)
   - Maximum Subarray

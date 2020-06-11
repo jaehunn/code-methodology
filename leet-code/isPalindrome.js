@@ -14,8 +14,6 @@ function isPalindrome(x) {
     rev += x % 10; // set
 
     x = Math.trunc(x / 10); // next
-
-    console.log(rev);
   }
 
   return rev === x || Math.trunc(rev / 10) === x;

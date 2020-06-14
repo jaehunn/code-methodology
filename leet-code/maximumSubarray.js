@@ -7,25 +7,29 @@
 function maxSubArray(items) {
   let maxSubArrayStartIndex = 0;
   let maxSubArrayLength = 0;
-  let maxSubArraySum = null;
+  let maxSubArraySum = null; // not 0, null = not value
 
   // iterate
   for (let startIndex = 0; startIndex < items.length; startIndex += 1) {
     let subArraySum = 0; // init
 
-    for (let length = 1; length < items.length - startIndex; length += 1) {
-      subArraySum += items[startIndex + length - 1];
+    for (let subArrayLength = 1; subArrayLength < items.length - startIndex; subArrayLength += 1) {
+      subArraySum += items[startIndex + subArrayLength - 1];
 
       // swap condition
       if (maxSubArraySum === null || subArraySum > maxSubArraySum) {
         // update
         maxSubArraySum = subArraySum;
         maxSubArrayStartIndex = startIndex;
-        maxSubArrayLength = length;
+        maxSubArrayLength = subArrayLength;
       }
     }
   }
 
+  // 1234, 3456 => length: 4
+  // endIndex - startIndex + 1 = length
+  // endIndex + 1 = startIndex + length
+  // slice(startIndex, startIndex + length
   return inputArray.slice(maxSubArrayStartIndex, maxSubArrayStartIndex + maxSubArrayLength);
 }
 
@@ -51,11 +55,11 @@ function maxSubArray(items) {
     // negative case
     if (currentSum < 0) {
       currentSum = 0; // drop
-      currentStartIndex = currentIndex + 1; // move index
+      currentStartIndex = currentIndex + 1; // next index
     }
   });
 
-  // slice([start, end + 1)) = slice([start, end])
+  // slice( [start ...end + 1) )
   return items.slice(maxStartIndex, maxEndIndex + 1);
 }
 
@@ -72,7 +76,7 @@ var maxSubArray = function (nums) {
   return max;
 };
 
-function maxSubArray(nums) {
+function _maxSubArray(nums) {
   let cur = nums[0];
   let res = nums[0];
 

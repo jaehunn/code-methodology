@@ -20,37 +20,17 @@ var addBinary = function (a, b) {
   return r;
 };
 
-// WIP
 function addBinary(a, b) {
-  if (a === "") return b;
-  if (b === "") return a;
+  let ai = a.length;
+  let bi = b.length;
 
-  if (a.length > b.length) return addBinary(b, a); // first element is larger length
-
-  let s = [];
-  let c = "0";
-
-  // a.length > b.length
-  for (let i = b.length - 1; i >= 0; i -= 1) {
-    let _a = i < a.length ? a.charAt(i) : "0";
-    let _b = b.charAt(i);
-    let _r = "";
-
-    if (_a !== _b) {
-      // 01 10 => 1 + c = ?
-      _r = c === "1" ? "0" : "1";
-    } else {
-      // 00 11 => 0 + c = ?
-      _r = c;
-
-      c = _a; // or _b
-    }
-
-    s.unshift(_r); // prepend
+  let r = "";
+  let c = 0;
+  while (ai || bi) {
+    let s = (ai > 0 ? +a[--ai] : 0) + (bi > 0 ? +b[--bi] : 0) + c;
+    r = (s % 2) + r; // prepend
+    c = s > 1 ? 1 : 0;
   }
 
-  // msb judgement
-  if (c === "1") s.unshift(c);
-
-  return s.join("");
+  return c ? c + r : r; // number + string
 }

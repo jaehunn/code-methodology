@@ -1,39 +1,15 @@
-function bitLength(number) {
-  let bitsCounter = 0;
-
-  while (1 << bitsCounter <= number) {
-    bitsCounter += 1;
-  }
-
-  return bitsCounter;
-}
-
-function countSetBits(originalNumber) {
-  let setBitsCount = 0;
-  let number = originalNumber;
-
-  while (number) {
-    setBitsCount += number & 1; // &: AND
-
-    number >>= 1;
-  }
-
-  return setBitsCount;
-}
-
-// ^: XOR
 function bitsDiff(numberA, numberB) {
-  return countSetBits(numberA ^ numberB);
+  return countSetBits(numberA ^ numberB); // XOR
 }
 
 function clearBit(number, bitPosition) {
-  const mask = ~(1 << bitPosition); // ~: Bits Inversion
+  const mask = ~(1 << bitPoisition); // bit inversion
 
   return number & mask;
 }
 
 function divideByTwo(number) {
-  return number >> 1; // shift
+  return number >> 1;
 }
 
 function multiplyByTwo(number) {
@@ -45,29 +21,30 @@ function getBit(number, bitPosition) {
 }
 
 function isEven(number) {
-  return (number & 1) === 0; // 2^0: 1, odd number
+  return (number & 1) === 0;
 }
 
 function isPositive(number) {
-  if (number === 0) return false; // 0
+  if (number === 0) return false;
 
-  return ((number >> 31) & 1) === 0; // sign bit
+  return ((number >> 31) & 1) === 0;
 }
 
 function isPowerOfTwo(number) {
-  return (number & (number - 1)) === 0; // only one bit: 1
+  return (number & (number - 1)) === 0;
 }
 
 function updateBit(number, bitPosition, bitValue) {
   const bitValueNormalized = bitValue ? 1 : 0;
 
-  const clearMask = ~(1 << bitPosition);
+  const clearMask = ~(1 << bitPosition); //
 
+  // clear => set
   return (number & clearMask) | (bitValueNormalized << bitPosition);
 }
 
 function switchSign(number) {
-  return ~number + 1; // twos complement
+  return ~number + 1; // inversion -> +1
 }
 
 function setBit(number, bitPosition) {
@@ -76,12 +53,10 @@ function setBit(number, bitPosition) {
 
 function multiplyUnsigned(numberA, numberB) {
   let result = 0;
-
   let multiplier = numberB;
-
   let bitIndex = 0;
 
-  while (multiplier !== 0) {
+  while (multiplier) {
     if (multiplier & 1) {
       result += numberA << bitIndex;
     }
@@ -106,6 +81,7 @@ function fullAdder(numberA, numberB) {
     const plus = numberAi ^ numberBi;
     const bitSum = plus ^ carryIn;
 
+    // carryIn or bit self
     const carryOut = (plus & carryIn) | (numberAi & numberBi);
     carry = carryOut;
 

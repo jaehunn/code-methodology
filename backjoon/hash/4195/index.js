@@ -4,7 +4,7 @@ const log = console.log;
  * @return {number}
  */
 
-// Union-Find
+// Union-Find: disjoint set
 function friendNet(fs) {
   let h = {}; // key: node, value: parent
   let n = {}; // count

@@ -29,10 +29,10 @@ function quickSort(originalItems, lowI = 0, highI = originalItems.length - 1) {
   const items = [...originalItems];
 
   if (lowI < highI) {
-    const partitionI = partitionItems(low, high);
+    const partitionI = partitionItems(lowI, highI);
 
-    quickSort(items, low, partitionI - 1);
-    quickSort(items, partitionI, high);
+    quickSort(items, lowI, partitionI - 1);
+    quickSort(items, partitionI, highI);
   }
 
   function partitionItems(lowI, highI) {

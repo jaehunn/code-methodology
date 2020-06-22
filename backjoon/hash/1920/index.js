@@ -17,3 +17,19 @@ function searchNum(nums) {
 
   return r;
 }
+
+// to dictionary
+function searchNumber(numbers) {
+  const hash = {};
+  numbers[0].forEach((v) => {
+    hash[v] = true;
+  });
+
+  let result = [];
+  for (let index = 0; index < numbers[1].length; index += 1) {
+    if (hash[numbers[1][index]]) result.push(1);
+    else result.push(0);
+  }
+
+  return result;
+}

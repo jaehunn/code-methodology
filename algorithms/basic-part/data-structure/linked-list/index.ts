@@ -1,10 +1,24 @@
+export class LinkedListNode {
+  constructor(public value: number, public next: LinkedListNode = null) {
+    this.value = value;
+    this.next = next;
+  }
+
+  toString(callback: (value: number) => string): string {
+    return callback ? callback(this.value) : `${this.value}`;
+  }
+}
+
 export default class LinkedList {
+  head: LinkedListNode;
+  tail: LinkedListNode;
+
   constrcutor() {
     this.head = null;
     this.tail = null;
   }
 
-  prepend(value) {
+  prepend(value: number): LinkedList {
     const newNode = new LinkedListNode(value, this.head);
     this.head = newNode;
 
@@ -15,7 +29,7 @@ export default class LinkedList {
     return this;
   }
 
-  append(value) {
+  append(value: number): LinkedList {
     const newNode = new LinkedListNode(value);
 
     if (!this.head) {
@@ -31,7 +45,7 @@ export default class LinkedList {
     return this;
   }
 
-  delete(value) {
+  delete(value: number): LinkedListNode {
     if (!this.head) return null;
 
     let deletedNode = null;
@@ -49,7 +63,7 @@ export default class LinkedList {
     if (currentNode !== null) {
       while (currentNode.next) {
         if (currentNode.next.value === value) {
-          deleteNode = currentNode.next;
+          deletedNode = currentNode.next;
           currentNode.next = currentNode.next.next; // unlink node
         } else {
           currentNode = currentNode.next; // move
@@ -65,7 +79,7 @@ export default class LinkedList {
     return deletedNode;
   }
 
-  find(value) {
+  find(value: number): LinkedListNode {
     if (!this.head) return null;
 
     let currentNode = null; // target reference
@@ -79,7 +93,7 @@ export default class LinkedList {
     return null; // failure
   }
 
-  deletedTail() {
+  deleteTail(): LinkedListNode {
     const deletedTail = this.tail; // init
 
     // list = 1 node
@@ -105,7 +119,7 @@ export default class LinkedList {
     return deletedTail;
   }
 
-  deletedHead() {
+  deleteHead(): LinkedListNode {
     if (!this.head) return null;
 
     const deletedHead = this.head; // target reference
@@ -122,19 +136,19 @@ export default class LinkedList {
   }
 
   // append [...values]
-  appendToArray(values) {
+  appendToArray(values: number[]): LinkedList {
     values.forEach((value) => this.append(value));
 
     return this;
   }
 
   // list => [...values]
-  listToArray() {
+  listToArray(): LinkedListNode[] {
     const nodes = [];
 
     let currentNode = this.head; // target reference
     while (currentNode) {
-      nodes.push(currentNode.value);
+      nodes.push(currentNode);
 
       currentNode = currentNode.next;
     }
@@ -142,13 +156,13 @@ export default class LinkedList {
     return nodes;
   }
 
-  toString(callback) {
+  toString(callback: (node: number) => string): string {
     return this.listToArray()
-      .map((node) => node.toString(callback))
+      .map((node) => node.toString(callback)) // node.toString = (this.value: number) => string
       .toString();
   }
 
-  reverse() {
+  reverse(): LinkedList {
     let currNode = this.head;
     let prevNode = null;
     let nextNode = null;
@@ -168,16 +182,5 @@ export default class LinkedList {
     this.head = prevNode;
 
     return this;
-  }
-}
-
-export class LinkedListNode {
-  constructor(value, next = null) {
-    this.value = value;
-    this.next = next;
-  }
-
-  toString(callback) {
-    return callback ? callback(this.value) : `${this.value}`;
   }
 }

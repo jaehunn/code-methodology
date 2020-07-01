@@ -21,7 +21,7 @@ node.next = new ListNode(3);
 node.next.next = new ListNode(4);
 
 function deleteDuplicates(head) {
-  if (!head) return head;
+  if (!head) return null;
 
   // targeting
   let currentNode = head;
@@ -33,5 +33,5 @@ function deleteDuplicates(head) {
     }
   }
 
-  return 
+  return head;
 }

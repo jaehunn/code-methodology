@@ -38,3 +38,35 @@
     return nums1;
   }
 }
+
+// 3. same tree
+{
+  // 두 노드를 비교하는 것을 하나의 재귀 조각으로 나타낸다.
+  // 있다면 파고 내려가는 로직이기 때문에, 노드가 일치하는 기저사례는 따로 지정하지 않는다.
+  function isSameTree(p, q) {
+    if (!p && !q) return true;
+    if (!p || !q || p.val !== q.val) return false;
+
+    return isSameTree(p.left, q.left) && isSameTree(p.right, q.right);
+  }
+}
+
+// 4. symmetric tree
+{
+  // 항상 재귀를 본 함수로 만들려는 생각을 탈피해야한다.
+  // 본 함수는 내부 재귀 함수의 첫 호출부로 사용해도된다.
+  function isSymmetric(root) {
+    if (!root) return true;
+
+    // 트리 중앙에 거울을 놓은 것 처럼, 대칭되도록 비교해야한다.
+    function isMirror(s, t) {
+      if (!s && !t) return true;
+      if (!s || !t || s.val !== t.val) return false;
+
+      return isMirror(s.left, t.right) && isMirror(s.right, t.left);
+    }
+
+    // same tree 의 본 함수 관점으로 본다면, root 노드의 왼쪽 자식의 서브 트리와 오른쪽 자식의 서브 트리를 비교함과 같다.
+    return isMirror(root.left, root.right);
+  }
+}

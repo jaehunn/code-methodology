@@ -150,8 +150,6 @@
 
     return nums.length && j + 1;
   };
-
-  console.log(removeDuplicates([1, 2, 3, 3, 4, 4, 4]));
 }
 
 /* 
@@ -190,7 +188,7 @@
     return nums.length;
   };
 
-  var _removeElement = function (nums, val) {
+  var removeElement = function (nums, val) {
     let i = 0;
     for (let j = 0; j < nums.length; j += 1) {
       if (nums[j] !== val) {
@@ -200,38 +198,5 @@
     }
 
     return i;
-  };
-}
-
-/* 
-    5. Implement strStr()
-    설명: 
-        strStr() 를 구현합니다. 주어지는 문자열에서 문자를 발견하고 첫 인덱스를 반환하세요.
-        못찾았다면, -1 입니다.
-    예시: 
-        Input: haystack = "hello", needle = "ll"
-        Output: 2
-
-        Input: haystack = "aaaaa", needle = "bba"
-        Output: -1
-    풀이:
-        
-*/
-{
-  /**
-   * @param {string} haystack
-   * @param {string} needle
-   * @return {number}
-   */
-  var strStr = function (haystack, needle) {
-    let j = -1;
-
-    if (haystack.length && needle) {
-      for (let i = 0; i < haystack.length; i += 1) {
-        if (haystack[i] === needle[0]) if (haystack.substring(i, i + needle.length) === needle) return i;
-      }
-    } else if (!needle) return 0;
-
-    return j;
   };
 }

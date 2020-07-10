@@ -4,10 +4,6 @@
  * @param {number} target
  * @return {number[]}
  */
-
-/*
-    nums 에 포함된 두 정수는 target 에 만족한다. 두 정수의 Indices 를 구하라. 
-*/
 function twoSum(nums, target) {
   // Key 가 정수고, Value 가 인덱스인 해쉬를 생성한다.
   const m = {};

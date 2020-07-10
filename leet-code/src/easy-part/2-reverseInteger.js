@@ -21,7 +21,7 @@ function reverse(x) {
 }
 
 // native 패턴
-function r_reverse(x) {
+function _reverse(x) {
   if (x < 0) return -1 * reverse(-x); // 음수 부호를 보존한다.
 
   // Hacky 패턴

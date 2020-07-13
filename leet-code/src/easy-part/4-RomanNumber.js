@@ -17,10 +17,9 @@ function romanToInt(s) {
     ["M", 1000],
   ]);
 
-  let i = s.length - 1; // 뒤부터 검사하면 올바르게 비교할 수 있다.
-  let r = m.get(s[i]); // 초기값
+  let i = s.length - 1;
+  let r = m.get(s[i]);
 
-  // 버블 비교, 앞에 있는 값이 크다면 더하고, 작다면 뺀다.
   while (i) {
     const c = m.get(s[i]);
     const p = m.get(s[i - 1]);
@@ -54,11 +53,6 @@ function romanToInt(s) {
     CM: 900,
   };
 
-  // MCMXCIV
-  // MC -> x, += M: 1000 / i: 1
-  // CM -> o, += CM: 900 / i: 3
-  // XC -> o, += XC: 90 / i: 5
-  // IV -> o, += IV: 4 / i: 7
   let r = 0;
   for (let i = 0; i < s.length; i += 1) {
     let c = s[i] + s[i + 1];

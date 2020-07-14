@@ -4,6 +4,9 @@
  * @return {boolean}
  */
 var isValid = function (s) {
+  // stack(push open brackets)
+  // target(= closed brackets)
+  // brackets mapping -> Map {}
   const m = {
     ")": "(",
     "]": "[",

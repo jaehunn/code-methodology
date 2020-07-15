@@ -16,8 +16,6 @@ function removeElement(nums, val) {
   return nums.length;
 }
 
-console.log(removeElement([1, 1, 2, 2, 2, 3], 2));
-
 function _removeElement(nums, val) {
   let i = 0;
 

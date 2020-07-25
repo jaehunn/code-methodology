@@ -4,6 +4,7 @@
  * @return {number}
  */
 
+// binary search
 // ex) x = 5
 function mySqrt(x) {
   let l = 0;
@@ -23,4 +24,21 @@ function mySqrt(x) {
 
   // 5 < 9, 5 = 2.xxx -> return 2;
   return x < r * r ? r - 1 : r;
+}
+
+function _mySqrt(x) {
+  if (x < 1) return 0;
+  let l = 1;
+  let r = x;
+  let m = 0;
+
+  while (l + 1 < r) {
+    m = Math.floor((l + r) / 2);
+
+    if (m * m > x) r = m;
+    else if (m * m < x) l = m;
+    else return m;
+  }
+
+  return l;
 }

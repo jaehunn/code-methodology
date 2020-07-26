@@ -14,18 +14,3 @@ function removeDuplicates(nums) {
 
   return nums.length && i + 1;
 }
-
-function _removeDuplicates(nums) {
-  let i = (r = 0);
-
-  while (r < nums.length) {
-    nums[i] = nums[r];
-
-    i += 1;
-    r += 1;
-
-    while (nums[r] === nums[r - 1]) r += 1; // find differ number
-  }
-
-  return i;
-}

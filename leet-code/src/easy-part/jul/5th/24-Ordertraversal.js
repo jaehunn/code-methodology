@@ -28,8 +28,8 @@ var levelOrderBottom = function (root) {
 
       // enqueue
       // *Null Checking
-      if (h.left !== null) q.push(h.left);
-      if (h.right !== null) q.push(h.right);
+      if (h.left) q.push(h.left);
+      if (h.right) q.push(h.right);
     }
 
     r.unshift(c);

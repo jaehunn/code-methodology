@@ -11,21 +11,6 @@
  * @param {TreeNode} root
  * @return {boolean}
  */
-var isBalanced = function (root) {
-  function _r(root) {
-    if (!root) return 0;
-
-    let l = _r(root.left);
-    let r = _r(root.right);
-
-    if (l === -1 || r === -1 || Math.abs(l - r) > 1) return -1;
-
-    return 1 + Math.max(l, r);
-  }
-
-  return _r(root) !== -1;
-};
-
 function isBalanced(root) {
   if (!root) return true;
 
@@ -55,4 +40,8 @@ function isBalanced(root) {
 
   // Infinity => false
   return Number.isFinite(_dfs(root));
+}
+
+function _r() {
+    
 }

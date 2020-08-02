@@ -41,7 +41,3 @@ function isBalanced(root) {
   // Infinity => false
   return Number.isFinite(_dfs(root));
 }
-
-function _r() {
-    
-}

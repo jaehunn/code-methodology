@@ -39,7 +39,7 @@ function hasPathSum(root, sum) {
 
       q.push(c.left); // enqueue
     } else if (c.right) {
-      c.right.val = +c.val;
+      c.right.val += c.val;
 
       q.push(c.right); // enqueue
     }

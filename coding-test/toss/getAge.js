@@ -22,5 +22,4 @@ function getAge(birth, date) {
 }
 
 const log = console.log;
-
 log(getAge("1993-12-27 00:00:00", "2020-08-31 00:00:00"));

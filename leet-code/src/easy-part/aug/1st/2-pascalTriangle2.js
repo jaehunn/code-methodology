@@ -53,5 +53,3 @@ var _getRow = function (rowIndex) {
 // rowIndex = 3
 // [(1), 1, 2, 1]
 // [3, 3, 1, 0] -> [3, 3, 1] -> [1, 3, 3, 1]
-
-console.log(_getRow(3));

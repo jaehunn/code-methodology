@@ -145,7 +145,6 @@ function hasPathSum(root, sum) {
 
 function _hasPathSum(root, sum) {
   if (!root) return false;
-  hasPathSum;
 
   let q = [root];
 

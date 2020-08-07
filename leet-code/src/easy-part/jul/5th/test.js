@@ -165,3 +165,30 @@ function _hasPathSum(root, sum) {
 
   return false;
 }
+
+// prices element > 0, not negative
+function maxProfit(prices) {
+  let r = 0;
+  let m = prices[0]; // fixed minimum index
+
+  for (let i = 1; i < prices.length; i += 1) {
+    m = Math.min(m, prices[i]); // find
+    r = Math.max(r, prices[i] - m); // update
+  }
+
+  return r;
+}
+
+// prices element > 0
+// bubble compare
+function maxProfit2(prices) {
+  let r = 0;
+
+  for (let i = 1; i < prices.length; i += 1) {
+    let p = prices[i - 1];
+    let c = prices[i];
+
+    // always positive, don't need to validate
+    if (p < c) r += p - c;
+  }
+}

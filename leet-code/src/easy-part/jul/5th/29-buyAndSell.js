@@ -19,9 +19,6 @@ var maxProfit = function (prices) {
   return r;
 };
 
-const log = console.log;
-log(maxProfit([7, 1, 3, 4, 6, 0])); // 6 - 1 => 5
-
 function maxProfit(prices) {
   let r = 0;
   let m = prices[0];

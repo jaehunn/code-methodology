@@ -27,7 +27,7 @@ function _singleNumber(nums) {
 // 1: 0001
 // 2: 0010
 
-function __singleNumber(nums) {
+function _singleNumber(nums) {
   let n = 0;
   for (let v of nums) {
     n ^= v;

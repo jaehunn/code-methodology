@@ -28,7 +28,7 @@
       else counts[items[i]] += 1; // index == items[i]
     }
 
-    // if items element: [0 ...100]
+    // if items element: [0, ...100]
     let major = 0;
     for (let i = 1; i <= 100; i += 1) {
       if (counts[i] > counts[major]) major = i;
@@ -36,4 +36,45 @@
 
     return major;
   }
+}
+
+// 2. linear time (N)
+{
+  // O((items.length + M + 1) * (items.length))
+  function movingAverage(items, M) {
+    let results = [];
+    for (let i = M - 1; i < items.length; i += 1) {
+      let sum = 0;
+
+      for (j = 0; j < M; j += 1) {
+        sum += items[i - j]; // [0, ...M-1]
+      }
+
+      results.push(sum / M);
+    }
+
+    return results;
+  }
+
+  // O(items.length)
+  function betterMovingAverage(items, M) {
+    let results = [];
+
+    let sum = 0;
+    for (let i = 0; i < M - 1; i += 1) {
+      sum += items[i]; // [0, ...M-2]
+    }
+
+    for (let i = M - 1; i < items.length; i += 1) {
+      sum += items[i]; // M-1
+      results.push(sum / M);
+      sum -= items[i - (M - 1)]; // front
+    }
+
+    return results;
+  }
+}
+
+// 3. sublinear time (logN)
+{
 }

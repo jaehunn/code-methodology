@@ -78,3 +78,46 @@
 // 3. sublinear time (logN)
 {
 }
+
+// 4. exponential time (n^2)
+{
+  // O(O(canEveryBodyEat) * 2^M)
+  const INF = 987654321;
+  const M = 10; // menus length limit
+
+  function canEverybodyEat(menus) {} // return true or false
+
+  function selectMenu(menus, foods) {
+    if (foods === M) {
+      if (canEverybodyEat(menus)) return menus.length();
+
+      return INF; // failure
+    }
+
+    let result = selectMenu(menus, foods + 1); // didn't cook
+
+    menus.push(); // add
+    result = Math.min(result, selectMenu(menus, foods + 1)); // cook
+
+    menus.pop(); // reset
+
+    return result;
+  }
+
+  // *WIP
+  // O(2^num)
+  function factor(num) {
+    if (num === 1) return [1, 1];
+
+    let result = [];
+    for (let div = 2; num > 1; div += 1) {
+      while (num % div === 0) {
+        num /= div;
+
+        result.push(div);
+      }
+    }
+
+    return result;
+  }
+}

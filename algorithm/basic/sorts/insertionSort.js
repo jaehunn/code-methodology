@@ -9,8 +9,6 @@ function insertionSort(items) {
 
     // swap
     while (items[c - 1] !== undefined && items[c] < items[c - 1]) {
-      f = true;
-
       [items[c - 1], items[c]] = [items[c], items[c - 1]];
 
       c -= 1;

@@ -1,4 +1,5 @@
 // @see https://m.blog.naver.com/ndb796/221234424646
+// @see https://hsp1116.tistory.com/42
 
 const N = 6; // nodes
 const INF = 987654321;
@@ -13,44 +14,52 @@ const G = [
   [INF, INF, 5, INF, 2, 0],
 ];
 
-function dijkstra(start) {
-  let D = Array(N).fill(0); // distance
-  let V = Array(N).fill(false); // visited
-
-  for (let i = 0; i < N; i += 1) {
-    D[i] = G[start][i]; // i: end
-  }
-
-  V[start] = true;
-
-  for (let i = 0; i < N - 2; i += 1) {
-    let current = getSmallIndex(D); //
-
-    V[current] = true;
-
-    for (let j = 0; j < N; j += 1) {
-      if (!V[j]) {
-        // update
-        if (D[current] + G[current][j] < D[j])
-          D[j] = D[current] + G[current][j];
-      }
-    }
-  }
-
-  return D;
-
-  function getSmallIndex(D) {
-    let min = INF; // 987654321
-    let minI = 0;
+// 1. Array
+{
+  function dijkstra(start) {
+    const D = Array(N).fill(0); // distance
+    const V = Array(N).fill(false); // visited
 
     for (let i = 0; i < N; i += 1) {
-      if (D[i] < min && !V[i]) {
-        min = D[i];
+      D[i] = G[start][i]; // i: end
+    }
 
-        minI = i;
+    V[start] = true;
+
+    for (let i = 0; i < N - 2; i += 1) {
+      let current = getSmallIndex(D); //
+
+      V[current] = true;
+
+      for (let j = 0; j < N; j += 1) {
+        if (!V[j]) {
+          // update
+          if (D[current] + G[current][j] < D[j])
+            D[j] = D[current] + G[current][j];
+        }
       }
     }
 
-    return minI;
+    return D;
+
+    function getSmallIndex(D) {
+      let min = INF; // 987654321
+      let minI = 0;
+
+      for (let i = 0; i < N; i += 1) {
+        if (D[i] < min && !V[i]) {
+          min = D[i];
+
+          minI = i;
+        }
+      }
+
+      return minI;
+    }
   }
+}
+
+// 2. Heap (priority queue)
+{
+  function _dijkstra() {}
 }

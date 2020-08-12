@@ -17,8 +17,8 @@
 var getIntersectionNode = function (headA, headB) {
   if (!headA || headB) return null;
 
-  let cA = headA; // 1-9-1-*2-4
-  let cB = headB; // 3-*2-4
+  let cA = headA;
+  let cB = headB;
 
   while (cA !== cB) {
     if (cA.next) {

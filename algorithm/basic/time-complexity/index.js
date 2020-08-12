@@ -121,3 +121,85 @@
     return result;
   }
 }
+
+// 5. maximum subarray-brute force
+{
+  function maximumSubarray(nums) {
+    let res = -987654321;
+
+    for (let i = 0; i < nums.length; i += 1) {
+      for (let j = i; j < nums.length; j += 1) {
+        let sum = 0;
+
+        for (let k = i; k <= j; k += 1) {
+          sum += nums[k];
+        }
+
+        res = Math.max(res, sum);
+      }
+    }
+
+    return res;
+  }
+
+  function betterMaximumSubarray(nums) {
+    let res = -987654321;
+
+    for (let i = 0; i < nums.length; i += 1) {
+      let sum = 0;
+
+      for (let j = i; j < nums.length; j += 1) {
+        sum += nums[j];
+
+        res = Math.max(res, sum);
+      }
+    }
+
+    return res;
+  }
+}
+
+// maximum subarray-divide and conquer
+{
+  function maximumSubarray(nums, l, r) {
+    if (l === r) return nums[l];
+
+    let m = Math.floor((l + r) / 2);
+
+    let l = -987654321;
+    let sum = 0;
+    for (let i = m; i >= l; i -= 1) {
+      sum += nums[i];
+
+      l = Math.max(l, sum);
+    }
+
+    let r = -987654321;
+    sum = 0;
+    for (let i = m + 1; i <= r; i += 1) {
+      sum += nums[i];
+
+      r = Math.max(r, sum);
+    }
+
+    let single = Math.max(maximumSubarray(nums, l, m), max(nums, m + 1, r));
+
+    return Math.max(single, l + r);
+  }
+}
+
+// maximum subarray-dynamic programming
+{
+  function maximumSubArray(nums) {
+    let res = -987654321;
+
+    let psum = 0;
+    for (let i = 0; i < nums.length; i += 1) {
+      psum = Math.max(psum, 0) + nums[i];
+
+      res = Math.max(psum, res);
+    }
+
+    return res;
+  }
+}

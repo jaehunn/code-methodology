@@ -13,10 +13,13 @@
  * @return {ListNode}
  */
 
-// * WIP
+// headA.length: 5
+// headB.length: 3
+// => 5 + 3 / 16 / 24 / 32
 var getIntersectionNode = function (headA, headB) {
   if (!headA || headB) return null;
 
+  // target
   let cA = headA;
   let cB = headB;
 
@@ -43,3 +46,16 @@ var getIntersectionNode = function (headA, headB) {
 
   return cB;
 };
+
+function getIntersectionNode(headA, headB) {
+  if (!headA || !headB) return null;
+  let cA = headA;
+  let cB = headB;
+
+  while (cA !== cB) {
+    cA = cA === null ? headB : cA.next;
+    cB = cB === null ? headA : cB.next;
+  }
+
+  return cA;
+}

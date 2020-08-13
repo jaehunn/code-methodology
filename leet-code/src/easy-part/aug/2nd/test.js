@@ -1,3 +1,9 @@
-let items = Array(4).fill(0);
+const log = console.log;
 
-console.log(items);
+{
+  function test() {
+    let r = [];
+
+    return r;
+  }
+}

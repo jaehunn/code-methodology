@@ -14,7 +14,7 @@ const G = [
   [INF, INF, 5, INF, 2, 0],
 ];
 
-// 1. Array
+// 1. Array: O(N^2)
 {
   function dijkstra(start) {
     const D = Array(N).fill(0); // distance
@@ -59,7 +59,8 @@ const G = [
   }
 }
 
-// 2. Heap (priority queue)
+// * WIP
+// 2. Heap (priority queue): O(N * LogN)
 {
   function _dijkstra() {}
 }

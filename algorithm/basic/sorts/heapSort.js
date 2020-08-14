@@ -88,6 +88,4 @@
       if (c <= Math.floor(h.length / 2)) heapify(c);
     }
   }
-
-  console.log(heapSort([7, 6, 5, 8, 3, 5]));
 }

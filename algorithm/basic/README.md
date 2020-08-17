@@ -1,5 +1,7 @@
 ### Basic Concepts
 
+- Reference: https://github.com/trekhleb/javascript-algorithms
+
 Data Structure
 
 - Array / Linked List

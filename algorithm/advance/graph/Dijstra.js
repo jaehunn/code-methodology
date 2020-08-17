@@ -62,5 +62,8 @@ const G = [
 // * WIP
 // 2. Heap (priority queue): O(N * LogN)
 {
-  function _dijkstra() {}
+  function _dijkstra(start) {
+    const D = Array(N).fill(0); // distance
+    let q = [];
+  }
 }

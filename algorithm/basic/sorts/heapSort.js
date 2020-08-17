@@ -11,7 +11,7 @@
       let c = i;
 
       do {
-        let rt = Math.floor((c - 1) / 2); // get root
+        let rt = Math.floor((c - 1) / 2);
 
         if (h[rt] < h[c]) {
           [h[rt], h[c]] = [h[c], h[rt]];
@@ -28,7 +28,7 @@
       let c = 1;
       let rt = 0;
       do {
-        c = 2 * rt + 1;
+        c = 2 * rt + 1; //
 
         // cmp(childs)
         if (c < i - 1 && h[c] < h[c + 1]) c += 1; // c + 1 < i
@@ -80,9 +80,7 @@
       // cmp(childs)
       if (c < h.length && h[c] < h[c + 1]) c += 1;
 
-      if (h[i] < h[c])
-        // cmp(parent, child)
-        [h[i], h[c]] = [h[c], h[i]];
+      if (h[i] < h[c]) [h[i], h[c]] = [h[c], h[i]]; // cmp(parent, child)
 
       // to h.length / 2
       if (c <= Math.floor(h.length / 2)) heapify(c);

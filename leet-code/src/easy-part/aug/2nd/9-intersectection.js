@@ -59,3 +59,7 @@ function getIntersectionNode(headA, headB) {
 
   return cA;
 }
+
+// intersection: (d)
+// headA(5): a -> b -> c -> (d) -> e -> c' -> (d) -> e
+// headB(3): c'-> (d) -> e -> a -> b -> c -> (d) -> e

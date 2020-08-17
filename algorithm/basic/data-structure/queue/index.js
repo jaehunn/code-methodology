@@ -1,6 +1,6 @@
 import LinkedList from "../linkedList";
 
-export default class Stack {
+export default class Queue {
   constructor() {
     this.linkedList = new LinkedList();
   }
@@ -10,23 +10,19 @@ export default class Stack {
   }
 
   peek() {
-    if (this.isEmpty()) return null;
+    if (!this.linkedList.head) return null;
 
     return this.linkedList.head.value;
   }
 
-  push(value) {
-    this.linkedList.prepend(value);
+  enqueue(value) {
+    this.linkedList.append(value);
   }
 
-  pop() {
+  dequeue() {
     const removedHead = this.linkedList.deleteHead();
 
     return removedHead ? removedHead.value : null;
-  }
-
-  toArray() {
-    return this.linkedList.toArray().map((node) => node.value);
   }
 
   toString(callback) {

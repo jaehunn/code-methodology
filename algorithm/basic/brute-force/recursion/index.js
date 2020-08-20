@@ -23,34 +23,33 @@
   }
 }
 
-//(WIP)
 // 2. Z
 // @see https://www.acmicpc.net/problem/1074
 {
-  function z(n, X, Y) {
+  function z(n, x, y) {
     let r = 0;
-    return _r(2 ** n, 0, 0); // first call
+    _r(n ** 2, 0, 0);
 
-    function _r(size, _x, _y) {
-      if (size === 2) {
-        if (_x === X && _y === Y) return r;
+    function _r(N, _x, _y) {
+      if (N === 2) {
+        if (_x === x && _y === y) console.log(r);
         r += 1;
-        if (_x + 1 === X && _y === Y) return r;
+        if (_x + 1 === x && _y === y) console.log(r);
         r += 1;
-        if (_x === X && _y + 1 === Y) return r;
+        if (_x === x && _y + 1 === y) console.log(r);
         r += 1;
-        if (_x + 1 === X && _y + 1 === Y) return r;
-        r += 1;
-        return r;
+        if (_x + 1 === x && _y + 1 === y) console.log(r);
+        return (r += 1);
       }
 
-      size = (size / 2) << 0;
-      _r(size, _x, _y);
-      _r(size, _x + size, _y);
-      _r(size, _x, _y + size);
-      _r(size, _x + size, _y + size);
+      // failed -> +4
+      let _N = (N / 2) >> 0;
+      _r(_N, _x, _y);
+      _r(_N, _x + _N, _y);
+      _r(_N, _x, _y + _N);
+      _r(_N, _x + _N, _y + _N);
     }
   }
 
-  console.log(z(2, 2, 1));
+  z(2, 2, 1);
 }

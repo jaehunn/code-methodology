@@ -7,8 +7,8 @@ Data Structure
 - Array / Linked List
 - Stack / Queue
 - Hash
-- Tree
 - Heap
+- Tree
 
 Algorithm
 

@@ -1,8 +1,6 @@
 // @see https://m.blog.naver.com/ndb796/221228342808
 // @see https://github.com/trekhleb/javascript-algorithms/blob/master/src/algorithms/sorting/heap-sort/HeapSort.js
 
-import { MinHeap } from "../data-structure/heap";
-
 // Binary Tree
 /**
  * @param {number[]} nums
@@ -88,28 +86,5 @@ import { MinHeap } from "../data-structure/heap";
       // to h.length / 2
       if (c <= Math.floor(h.length / 2)) heapify(c);
     }
-  }
-}
-
-export const HeapSort = (items) => {
-  const sorted = [];
-  const minHeap = new MinHeap();
-
-  items.forEach((item) => {
-    minHeap.add(item);
-  });
-
-  while (!minHeap.isEmpty()) {
-    const minItem = minHeap.extract();
-
-    sorted.push(minItem);
-  }
-
-  return sorted;
-};
-
-export default class HeapSort {
-  constructor(comparator) {
-    super(comparator);
   }
 }

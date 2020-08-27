@@ -16,18 +16,30 @@ function merge(start, middle, end) {
   let j = middle + 1;
 
   let sorted = [];
-
-  // wip
-  while (sorted.length < end - start + 1) {
-    if (i <= middle && items[i] <= items[j]) {
-      sorted.push(items[i++]);
+  let k = 0;
+  while (i <= middle && j <= end) {
+    if (items[i] <= items[j]) {
+      sorted[k++] = items[i++];
     } else {
-      sorted.push(items[j++]);
+      sorted[k++] = items[j++];
     }
   }
 
+  // rest
+  if (i > middle) {
+    for (; j <= end; j += 1) sorted[k++] = items[j];
+  } else {
+    for (; i <= middle; i += 1) sorted[k++] = items[i];
+  }
+
   console.log(sorted);
+
+  // clone
+  for (let i = start; i <= end; i += 1) {
+    items[i] = sorted.shift();
+  }
 }
 
 let items = [7, 6, 5, 8, 3, 5, 9, 1];
 mergeSort(items);
+console.log(items);

@@ -5,7 +5,7 @@ function quickSort(items, start = 0, end = items.length - 1) {
   let i = start + 1;
   let j = end;
 
-  // 1. divide(sort)
+  // 1. partition(sort)
   while (i <= j) {
     // move target
     while (i <= end && items[i] >= items[pivot]) i += 1;
@@ -21,7 +21,7 @@ function quickSort(items, start = 0, end = items.length - 1) {
 
   // pivot Index = j
 
-  // 2. conquer
+  // 2. divide
   quickSort(items, start, j - 1);
   quickSort(items, j + 1, end);
 }

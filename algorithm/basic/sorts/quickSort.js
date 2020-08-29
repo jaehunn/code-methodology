@@ -19,8 +19,6 @@ function quickSort(items, start = 0, end = items.length - 1) {
     }
   }
 
-  // pivot Index = j
-
   // 2. divide
   quickSort(items, start, j - 1);
   quickSort(items, j + 1, end);

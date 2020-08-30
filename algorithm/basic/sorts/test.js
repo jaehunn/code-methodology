@@ -1,36 +1,155 @@
-function mergeSort(items, s = 0, e = items.length - 1) {
-  let r;
+const { log, clear } = console;
 
-  // 길이가 1이 될 때까지
-  if (s < e) {
-    const m = ((s + e) / 2) << 0;
+const asc = (a, b) => a < b;
+const desc = (a, b) => a > b;
 
-    // 재귀적으로 배열을 절반씩 나눈다.
-    mergeSort(items, s, m);
-    mergeSort(items, m + 1, e);
+// 1. asc vs. desc
+// 2. start: 0 vs. last
 
-    // 두 배열을 병합한다.
-    r = merge(s, m, e);
+// *quick: pivot: 0 middle last random
+
+// selection
+function selection(items, comparator = asc) {
+  for (let i = 0; i < items.length; i += 1) {
+    let t = i;
+
+    for (let j = i + 1; j < items.length; j += 1) {
+      if (!comparator(items[t], items[j])) t = j;
+    }
+
+    if (t !== i) [items[i], items[t]] = [items[t], items[i]];
   }
 
-  return r;
+  return items;
+}
 
-  function merge(s, m, e) {
-    // 두 배열의 시작 포인터
+selection([5, 3, 1, 2, 4], asc); // 1 2 3 4 5
+selection([5, 3, 1, 2, 4], desc); // 5 4 3 2 1
+
+function r_selection(items, comparator = asc) {
+  for (let i = items.length - 1; i >= 0; i -= 1) {
+    let t = i;
+
+    for (let j = i - 1; j >= 0; j -= 1) {
+      if (!comparator(items[t], items[j])) t = j;
+    }
+
+    if (t !== i) [items[i], items[t]] = [items[t], items[i]];
+  }
+
+  return items;
+}
+
+r_selection([5, 3, 1, 2, 4], asc); // 1 2 3 4 5
+r_selection([5, 3, 1, 2, 4], desc); // 5 4 3 2 1
+
+// bubble
+function bubble(items, comparator = asc) {
+  let f;
+
+  for (let i = 1; i < items.length; i += 1) {
+    f = false;
+
+    for (let j = 0; j < items.length - i; j += 1) {
+      if (!comparator(items[j], items[j + 1])) [items[j], items[j + 1]] = [items[j + 1], items[j]];
+
+      f = true;
+    }
+
+    if (!f) return items;
+  }
+
+  return items;
+}
+
+bubble([5, 3, 1, 2, 4], asc);
+bubble([5, 3, 1, 2, 4], desc);
+
+function r_bubble(items, comparator = asc) {
+  let f;
+
+  for (let i = items.length - 2; i >= 0; i -= 1) {
+    f = false;
+
+    for (let j = items.length - 1; j >= items.length - i - 1; j -= 1) {
+      if (!comparator(items[j - 1], items[j])) [items[j - 1], items[j]] = [items[j], items[j - 1]];
+
+      f = true;
+    }
+
+    if (!f) return items;
+  }
+
+  return items;
+}
+
+r_bubble([5, 3, 1, 2, 4], asc);
+r_bubble([5, 3, 1, 2, 4], desc);
+
+// insertion
+function insertion(items, comparator = asc) {
+  for (let i = 0; i < items.length; i += 1) {
+    let t = i;
+
+    while (t && !comparator(items[t - 1], items[t])) {
+      [items[t - 1], items[t]] = [items[t], items[t - 1]];
+
+      t -= 1;
+    }
+  }
+
+  return items;
+}
+
+insertion([5, 3, 1, 2, 4], asc);
+insertion([5, 3, 1, 2, 4], desc);
+
+function r_insertion(items, comparator = asc) {
+  for (let i = items.length - 1; i >= 0; i -= 1) {
+    let t = i;
+
+    while (t < items.length - 1 && !comparator(items[t], items[t + 1])) {
+      [items[t], items[t + 1]] = [items[t + 1], items[t]];
+
+      t += 1;
+    }
+  }
+
+  return items;
+}
+
+r_insertion([5, 3, 1, 2, 4], asc);
+r_insertion([5, 3, 1, 2, 4], desc);
+
+// merge (TODO)
+function merge(items, comparator = asc, s = 0, e = items.length - 1) {
+  if (s < e) {
+    const m = ((e + s) / 2) << 0;
+
+    // divide
+    merge(items, comparator, s, m);
+    merge(items, comparator, m + 1, e);
+
+    // conquers
+    _mergeSort(s, m, e, comparator);
+  }
+
+  function _mergeSort(s, m, e, comparator) {
+    log(s, m, e);
     let i = s;
     let j = m + 1;
 
     let r = [];
-    while (r.length < e - s + 1) {
-      // 포인터가 배열의 길이를 초과하면 자동적으로 다른 배열이 남은 원소를 차지한다.
-      if (i <= m || items[i] < items[j]) r.push(items[i++]);
+    while (r.length <= e - s) {
+      if (i <= m || comparator(items[i], items[j])) r.push(items[i++]);
       else r.push(items[j++]);
     }
 
-    return r;
+    log(r);
   }
 }
 
-console.log(mergeSort([5, 4, 3, 2, 1]));
-// desc: [5, 4] [3] -> shift [5, 4, 3]
-// asc: [4, 5] [3] -> push [3, 4, 5]
+log(merge([5, 3, 1, 2, 4], asc));
+log(merge([5, 3, 1, 2, 4], desc));
+
+// quick

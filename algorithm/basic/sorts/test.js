@@ -121,32 +121,37 @@ function r_insertion(items, comparator = asc) {
 r_insertion([5, 3, 1, 2, 4], asc);
 r_insertion([5, 3, 1, 2, 4], desc);
 
-// merge (TODO)
+// merge
 function merge(items, comparator = asc, s = 0, e = items.length - 1) {
+  // size > 1
   if (s < e) {
-    const m = ((e + s) / 2) << 0;
+    const m = ((s + e) / 2) >> 0;
 
     // divide
     merge(items, comparator, s, m);
     merge(items, comparator, m + 1, e);
 
-    // conquers
-    _mergeSort(s, m, e, comparator);
+    mergeSort(items, comparator, s, m, e);
   }
 
-  function _mergeSort(s, m, e, comparator) {
-    log(s, m, e);
-    let i = s;
-    let j = m + 1;
+  return items;
+}
 
-    let r = [];
-    while (r.length <= e - s) {
-      if (i <= m || comparator(items[i], items[j])) r.push(items[i++]);
-      else r.push(items[j++]);
-    }
+function mergeSort(items, comparator, s, m, e) {
+  let i = s;
+  let j = m + 1;
 
-    log(r);
+  let r = [];
+  while (i <= m && j <= e) {
+    if (comparator(items[i], items[j])) r.push(items[i++]);
+    else r.push(items[j++]);
   }
+
+  // rest
+  while (i > m && j <= e) r.push(items[j++]);
+  while (j > e && i <= m) r.push(items[i++]);
+
+  for (let i = s; i <= e; i += 1) items[i] = r.shift();
 }
 
 log(merge([5, 3, 1, 2, 4], asc));

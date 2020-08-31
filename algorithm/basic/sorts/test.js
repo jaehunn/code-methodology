@@ -1,7 +1,7 @@
 const { log, clear } = console;
 
-const asc = (a, b) => a < b;
-const desc = (a, b) => a > b;
+const asc = (a, b) => a <= b;
+const desc = (a, b) => a >= b;
 
 // 1. asc vs. desc
 // 2. start: 0 vs. last
@@ -131,28 +131,57 @@ function merge(items, comparator = asc, s = 0, e = items.length - 1) {
     merge(items, comparator, s, m);
     merge(items, comparator, m + 1, e);
 
-    mergeSort(items, comparator, s, m, e);
+    _mergeSort(s, m, e);
   }
+
+  return items;
+
+  function _mergeSort(s, m, e) {
+    let i = s;
+    let j = m + 1;
+
+    let r = [];
+    while (i <= m || j <= e) {
+      if (j > e || comparator(items[i], items[j])) r.push(items[i++]);
+      else r.push(items[j++]);
+    }
+
+    // copy
+    for (let i = s; i <= e; i += 1) items[i] = r.shift();
+  }
+}
+
+merge([5, 3, 1, 2, 4], asc);
+merge([5, 3, 1, 2, 4], desc);
+
+// quick
+function quick(items, comparator = asc, s = 0, e = items.length - 1) {
+  // size 1, return
+  if (s >= e) return;
+
+  let p = s;
+  let l = s + 1;
+  let r = e;
+
+  // divide
+  while (l <= r) {
+    while (l <= e && comparator(items[l], items[p])) l += 1;
+    while (r > s && comparator(items[p], items[r])) r -= 1;
+
+    if (l > r) {
+      [items[p], items[r]] = [items[r], items[p]];
+    } else {
+      [items[l], items[r]] = [items[r], items[l]];
+    }
+  }
+
+  // conquer
+  // pivot -> right Index
+  quick(items, comparator, s, r - 1);
+  quick(items, comparator, r + 1, e);
 
   return items;
 }
 
-// merge items is already sorted.
-function mergeSort(items, comparator, s, m, e) {
-  let i = s;
-  let j = m + 1;
-
-  let r = [];
-  while (r.length <= e - s) {
-    if (j > e || comparator(items[i], items[j])) r.push(items[i++]);
-    else r.push(items[j++]);
-  }
-
-  // clone
-  for (let i = s; i <= e; i += 1) items[i] = r.shift();
-}
-
-log(merge([5, 3, 1, 2, 4], asc));
-log(merge([5, 3, 1, 2, 4], desc));
-
-// quick
+log(quick([5, 3, 1, 2, 4], asc));
+log(quick([5, 3, 1, 2, 4], desc));

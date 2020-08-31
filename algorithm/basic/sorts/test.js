@@ -137,20 +137,18 @@ function merge(items, comparator = asc, s = 0, e = items.length - 1) {
   return items;
 }
 
+// merge items is already sorted.
 function mergeSort(items, comparator, s, m, e) {
   let i = s;
   let j = m + 1;
 
   let r = [];
-  while (i <= m && j <= e) {
-    if (comparator(items[i], items[j])) r.push(items[i++]);
+  while (r.length <= e - s) {
+    if (j > e || comparator(items[i], items[j])) r.push(items[i++]);
     else r.push(items[j++]);
   }
 
-  // rest
-  while (i > m && j <= e) r.push(items[j++]);
-  while (j > e && i <= m) r.push(items[i++]);
-
+  // clone
   for (let i = s; i <= e; i += 1) items[i] = r.shift();
 }
 

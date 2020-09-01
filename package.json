@@ -1,0 +1,28 @@
+{
+  "name": "cs-skills",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "karma start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jaehunn/cs-skills.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jaehunn/cs-skills/issues"
+  },
+  "homepage": "https://github.com/jaehunn/cs-skills#readme",
+  "dependencies": {
+    "karma": "^5.2.0"
+  },
+  "devDependencies": {
+    "jasmine-core": "^3.6.0",
+    "karma-chrome-launcher": "^3.1.0",
+    "karma-jasmine": "^4.0.1"
+  }
+}

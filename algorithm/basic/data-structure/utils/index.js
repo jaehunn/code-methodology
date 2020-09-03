@@ -29,7 +29,7 @@ export class Comparator {
     return this.greaterThan(a, b) || this.equal(a, b);
   }
 
-  reverse(a, b) {
+  reverse() {
     const compareOriginal = this.compare;
 
     // Redefine

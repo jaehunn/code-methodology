@@ -1,51 +1,13 @@
+import Sort from "../Sort";
+
 describe("Sort", () => {
-  let items;
-  let asc_items;
-  let desc_items;
+  it("직접적으로 Sort.sort() 를 호출하면 에러를 던집니다.", () => {
+    const doForbiddenSort = () => {
+      const sorter = new Sort();
 
-  let asc;
-  let desc;
+      sorter.sort();
+    };
 
-  let asc_sort;
-  let desc_sort;
-
-  beforeEach(() => {
-    items = [5, 3, 4, 1, 2];
-    asc_items = [1, 2, 3, 4, 5];
-    desc_items = [5, 4, 3, 2, 1];
-
-    asc = (a, b) => a < b;
-    desc = (a, b) => a > b;
-
-    asc_sort = new Sort(items, asc);
-    desc_sort = new Sort(items, desc);
-  });
-
-  describe("Selection Sort", () => {
-    it("Sort Ascending", () => {
-      asc_sort.selection();
-
-      expect(asc_sort.items).toEqual(asc_items);
-    });
-
-    it("Sort Decending", () => {
-      desc_sort.selection();
-
-      expect(desc_sort.items).toEqual(desc_items);
-    });
-  });
-
-  describe("Bubble Sort", () => {
-    it("Sort Ascending", () => {
-      asc_sort.bubble();
-
-      expect(asc_sort.items).toEqual(asc_items);
-    });
-
-    it("Sort Decending", () => {
-      desc_sort.bubble();
-
-      expect(desc_sort.items).toEqual(desc_items);
-    });
+    expect(doForbiddenSort).toThrow();
   });
 });

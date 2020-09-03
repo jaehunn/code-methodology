@@ -1,9 +1,10 @@
 {
-  "name": "cs-skills",
+  "name": "algorithm",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "karma.conf.js",
   "scripts": {
+    "build": "babel sort/*.js -w -d sort/js",
     "test": "karma start"
   },
   "repository": {
@@ -17,14 +18,15 @@
     "url": "https://github.com/jaehunn/cs-skills/issues"
   },
   "homepage": "https://github.com/jaehunn/cs-skills#readme",
-  "dependencies": {
-    "karma": "^5.2.0"
-  },
   "devDependencies": {
     "@babel/cli": "^7.11.5",
     "@babel/core": "^7.11.5",
+    "@babel/node": "^7.10.5",
     "@babel/preset-env": "^7.11.5",
+    "jasmine": "^3.6.1",
     "jasmine-core": "^3.6.0",
+    "karma": "^5.2.1",
+    "karma-babel-preprocessor": "^8.0.1",
     "karma-chrome-launcher": "^3.1.0",
     "karma-jasmine": "^4.0.1"
   }

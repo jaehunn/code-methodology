@@ -25,7 +25,7 @@ export class Comparator {
     return this.lessThan(a, b) || this.equal(a, b);
   }
 
-  greaterThanEqual(a, b) {
+  greaterThanOrEqual(a, b) {
     return this.greaterThan(a, b) || this.equal(a, b);
   }
 

@@ -1,9 +1,9 @@
 import { Comparator } from "../utils";
 
 export default class Sort {
-  constructor(items, compareFunction) {
+  constructor(items) {
     this.items = items || [];
-    this.comparator = new Comparator(compareFunction);
+    this.comparator = new Comparator();
   }
 
   sort() {

@@ -6,9 +6,9 @@ module.exports = function (config) {
     frameworks: ["browserify", "jasmine"],
     plugins: ["karma-jasmine", "karma-chrome-launcher", "karma-browserify"],
     preprocessors: {
-      "lib/sort/test.js": ["browserify"],
+      "lib/sort/selection/test.js": ["browserify"],
     },
-    files: ["lib/sort/test.js"],
+    files: ["lib/sort/selection/test.js"],
     autoWatch: true,
     browsers: ["Chrome"],
   });

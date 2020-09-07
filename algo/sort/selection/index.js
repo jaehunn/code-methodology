@@ -1,19 +1,19 @@
 import Sort from "../../sort";
 
 export default class Selection extends Sort {
-  constructor(items) {
-    super(items);
-  }
+  sort(originalItems) {
+    const items = [...originalItems];
 
-  sort() {
-    for (let i = 0; i < this.items.length; i += 1) {
+    for (let i = 0; i < items.length; i += 1) {
       let minI = i;
 
-      for (let j = i + 1; j < this.items.length; j += 1) {
-        if (this.comparator.lessThan(this.items[j], this.items[minI])) minI = j;
+      for (let j = i + 1; j < items.length; j += 1) {
+        if (this.comparator.lessThan(items[j], items[minI])) minI = j;
       }
 
-      if (minI !== i) [this.items[minI], this.items[i]] = [this.items[i], this.items[minI]];
+      if (minI !== i) [items[minI], items[i]] = [items[i], items[minI]];
     }
+
+    return items;
   }
 }

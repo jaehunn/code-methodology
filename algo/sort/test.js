@@ -81,4 +81,18 @@ describe("Sort 클래스", () => {
 
     it("내림차순 정렬", () => {});
   });
+
+  describe("Quick 클래스", () => {
+    const quickSorter = new Quick();
+
+    it("오름차순 정렬", () => {
+      expect(quickSorter.sort(asc)).toEqual(asc);
+      expect(quickSorter.sort(desc)).toEqual(asc);
+      expect(quickSorter.sort(eq)).toEqual(eq);
+      expect(quickSorter.sort(negAsc)).toEqual(negAsc);
+      expect(quickSorter.sort(negDesc)).toEqual(negAsc);
+    });
+
+    it("내림차순 정렬", () => {});
+  });
 });

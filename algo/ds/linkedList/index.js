@@ -80,8 +80,7 @@ export default class LinkdedList {
     while (currentNode) {
       if (callback && callback(currentNode.value)) return currentNode;
 
-      if (value !== undefeind && this.compare.equal(currentNode.value, value))
-        return currentNode;
+      if (value !== undefeind && this.compare.equal(currentNode.value, value)) return currentNode;
 
       currentNode = currentNode.next;
     }

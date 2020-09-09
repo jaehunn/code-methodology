@@ -72,7 +72,7 @@ describe("Sort 클래스", () => {
     const mergeSorter = new Merge();
 
     it("오름차순 정렬", () => {
-      expect(mergeSorter.sort(asc)).toEqual(asc);
+      expect(mergeSorter.sort(desc)).toEqual(asc);
       expect(mergeSorter.sort(desc)).toEqual(asc);
       expect(mergeSorter.sort(eq)).toEqual(eq);
       expect(mergeSorter.sort(negAsc)).toEqual(negAsc);
@@ -86,7 +86,7 @@ describe("Sort 클래스", () => {
     const quickSorter = new Quick();
 
     it("오름차순 정렬", () => {
-      expect(quickSorter.sort(asc)).toEqual(asc);
+      expect(quickSorter.sort(desc)).toEqual(asc);
       expect(quickSorter.sort(desc)).toEqual(asc);
       expect(quickSorter.sort(eq)).toEqual(eq);
       expect(quickSorter.sort(negAsc)).toEqual(negAsc);

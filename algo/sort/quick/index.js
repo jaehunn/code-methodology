@@ -6,14 +6,14 @@ export default class Quick extends Sort {
 
     const items = [...originalItems];
 
-    let leftItems = [];
-    let rightItems = [];
+    const leftItems = [];
+    const rightItems = [];
 
-    const pivot = items.shift();
-    let centerItems = [pivot];
+    const pivot = items.shift(); // first element
+    const centerItems = [pivot];
 
     while (items.length) {
-      let currentItem = items.shift();
+      const currentItem = items.shift();
 
       if (this.comparator.equal(currentItem, pivot)) {
         centerItems.push(currentItem);
@@ -24,8 +24,8 @@ export default class Quick extends Sort {
       }
     }
 
-    let sortedLeftItems = this.sort(leftItems);
-    let sortedRightItems = this.sort(rightItems);
+    const sortedLeftItems = this.sort(leftItems);
+    const sortedRightItems = this.sort(rightItems);
 
     return sortedLeftItems.concat(centerItems, sortedRightItems);
   }

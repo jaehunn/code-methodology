@@ -1,10 +1,8 @@
 import Sort from "../../sort";
 
 export default class Merge extends Sort {
-  sort(originalItems) {
-    if (originalItems.length <= 1) return originalItems;
-
-    const items = [...originalItems];
+  sort(items) {
+    if (items.length <= 1) return items;
 
     let middleIndex = (items.length / 2) << 0;
 

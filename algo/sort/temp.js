@@ -1,159 +1,3 @@
-const { log, clear } = console;
-
-const asc = (a, b) => a <= b;
-const desc = (a, b) => a >= b;
-
-// 1. asc vs. desc
-// 2. start: 0 vs. last
-
-// *quick: pivot: 0 middle last random
-
-// selection
-function selection(items, comparator = asc) {
-  for (let i = 0; i < items.length; i += 1) {
-    let t = i;
-
-    for (let j = i + 1; j < items.length; j += 1) {
-      if (!comparator(items[t], items[j])) t = j;
-    }
-
-    if (t !== i) [items[i], items[t]] = [items[t], items[i]];
-  }
-
-  return items;
-}
-
-selection([5, 3, 1, 2, 4], asc); // 1 2 3 4 5
-selection([5, 3, 1, 2, 4], desc); // 5 4 3 2 1
-
-function r_selection(items, comparator = asc) {
-  for (let i = items.length - 1; i >= 0; i -= 1) {
-    let t = i;
-
-    for (let j = i - 1; j >= 0; j -= 1) {
-      if (!comparator(items[t], items[j])) t = j;
-    }
-
-    if (t !== i) [items[i], items[t]] = [items[t], items[i]];
-  }
-
-  return items;
-}
-
-r_selection([5, 3, 1, 2, 4], asc); // 1 2 3 4 5
-r_selection([5, 3, 1, 2, 4], desc); // 5 4 3 2 1
-
-// bubble
-function bubble(items, comparator = asc) {
-  let f;
-
-  for (let i = 1; i < items.length; i += 1) {
-    f = false;
-
-    for (let j = 0; j < items.length - i; j += 1) {
-      if (!comparator(items[j], items[j + 1])) [items[j], items[j + 1]] = [items[j + 1], items[j]];
-
-      f = true;
-    }
-
-    if (!f) return items;
-  }
-
-  return items;
-}
-
-bubble([5, 3, 1, 2, 4], asc);
-bubble([5, 3, 1, 2, 4], desc);
-
-function r_bubble(items, comparator = asc) {
-  let f;
-
-  for (let i = items.length - 2; i >= 0; i -= 1) {
-    f = false;
-
-    for (let j = items.length - 1; j >= items.length - i - 1; j -= 1) {
-      if (!comparator(items[j - 1], items[j])) [items[j - 1], items[j]] = [items[j], items[j - 1]];
-
-      f = true;
-    }
-
-    if (!f) return items;
-  }
-
-  return items;
-}
-
-r_bubble([5, 3, 1, 2, 4], asc);
-r_bubble([5, 3, 1, 2, 4], desc);
-
-// insertion
-function insertion(items, comparator = asc) {
-  for (let i = 0; i < items.length; i += 1) {
-    let t = i;
-
-    while (t && !comparator(items[t - 1], items[t])) {
-      [items[t - 1], items[t]] = [items[t], items[t - 1]];
-
-      t -= 1;
-    }
-  }
-
-  return items;
-}
-
-insertion([5, 3, 1, 2, 4], asc);
-insertion([5, 3, 1, 2, 4], desc);
-
-function r_insertion(items, comparator = asc) {
-  for (let i = items.length - 1; i >= 0; i -= 1) {
-    let t = i;
-
-    while (t < items.length - 1 && !comparator(items[t], items[t + 1])) {
-      [items[t], items[t + 1]] = [items[t + 1], items[t]];
-
-      t += 1;
-    }
-  }
-
-  return items;
-}
-
-r_insertion([5, 3, 1, 2, 4], asc);
-r_insertion([5, 3, 1, 2, 4], desc);
-
-// merge
-function merge(items, comparator = asc, s = 0, e = items.length - 1) {
-  // size > 1
-  if (s < e) {
-    const m = ((s + e) / 2) >> 0;
-
-    // divide
-    merge(items, comparator, s, m);
-    merge(items, comparator, m + 1, e);
-
-    _mergeSort(s, m, e);
-  }
-
-  return items;
-
-  function _mergeSort(s, m, e) {
-    let i = s;
-    let j = m + 1;
-
-    let r = [];
-    while (i <= m || j <= e) {
-      if (j > e || comparator(items[i], items[j])) r.push(items[i++]);
-      else r.push(items[j++]);
-    }
-
-    // copy
-    for (let i = s; i <= e; i += 1) items[i] = r.shift();
-  }
-}
-
-merge([5, 3, 1, 2, 4], asc);
-merge([5, 3, 1, 2, 4], desc);
-
 // quick
 function quick(items, comparator = asc, s = 0, e = items.length - 1) {
   // size 1, return
@@ -183,5 +27,122 @@ function quick(items, comparator = asc, s = 0, e = items.length - 1) {
   return items;
 }
 
-log(quick([5, 3, 1, 2, 4], asc));
-log(quick([5, 3, 1, 2, 4], desc));
+function _quick(originalItems) {
+  if (originalItems.length <= 1) return originalItems;
+
+  const items = [...originalItems];
+
+  let leftItems = [];
+  let rightItems = [];
+
+  const pivot = items.shift();
+  let centerItems = [pivot];
+
+  while (items.length) {
+    let currentItem = items.shift();
+
+    if (this.comparator.equal(currentItem, pivot)) {
+      centerItems.push(currentItem);
+    } else if (this.comparator.lessThan(currentItem, pivot)) {
+      leftItems.push(currentItem);
+    } else {
+      rightItems.push(currentItem);
+    }
+  }
+
+  let sortedLeftItems = this.sort(leftItems);
+  let sortedRightItems = this.sort(rightItems);
+
+  return sortedLeftItems.concat(centerItems, sortedRightItems);
+}
+
+// @see https://m.blog.naver.com/ndb796/221228342808
+// @see https://github.com/trekhleb/javascript-algorithms/blob/master/src/algorithms/sorting/heap-sort/HeapSort.js
+
+// Binary Tree
+/**
+ * @param {number[]} nums
+ * @return {number[]}
+ */
+{
+  function heapSort(h) {
+    for (let i = 1; i < h.length; i += 1) {
+      let c = i;
+
+      do {
+        let rt = Math.floor((c - 1) / 2);
+
+        if (h[rt] < h[c]) {
+          [h[rt], h[c]] = [h[c], h[rt]];
+        }
+
+        c = rt;
+      } while (c !== 0);
+    }
+
+    for (let i = h.length - 1; i >= 0; i -= 1) {
+      // swap(root, 0)
+      [h[0], h[i]] = [h[i], h[0]];
+
+      let c = 1;
+      let rt = 0;
+      do {
+        c = 2 * rt + 1; //
+
+        // cmp(childs)
+        if (c < i - 1 && h[c] < h[c + 1]) c += 1; // c + 1 < i
+
+        // cmp(parent, child)
+        if (c < i && h[rt] < h[c]) [h[rt], h[c]] = [h[c], h[rt]];
+
+        rt = c; // move root
+      } while (c < i);
+    }
+
+    return h;
+  }
+}
+
+// separate logic
+{
+  function heapSort(h) {
+    // init: heapify()
+    for (let i = Math.floor(h.length / 2); i >= 0; i -= 1) heapify(i);
+
+    // sort: swap() + heapify()
+    for (let i = h.length - 1; i >= 0; i -= 1) {
+      // swap(root, leaf)
+      [h[0], h[i]] = [h[i], h[0]];
+
+      // heapify()
+      let rt = 0;
+      let c = 1;
+      do {
+        c = 2 * rt + 1;
+
+        // cmp(childs)
+        if (c < i - 1 && h[c] < h[c + 1]) c += 1;
+
+        // cmp(parent, child)
+        if (c < i && h[rt] < h[c]) [h[rt], h[c]] = [h[c], h[rt]];
+
+        rt = c; // move root
+      } while (c < i);
+    }
+
+    return h;
+
+    // custom: heapifyUp() or heapifyDown()
+    function heapify(i) {
+      let c = 2 * i + 1;
+
+      // cmp(childs)
+      if (c < h.length && h[c] < h[c + 1]) c += 1;
+
+      if (h[i] < h[c]) [h[i], h[c]] = [h[c], h[i]]; // cmp(parent, child)
+
+      // to h.length / 2
+      if (c <= Math.floor(h.length / 2)) heapify(c);
+    }
+  }
+}

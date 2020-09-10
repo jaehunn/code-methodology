@@ -1,7 +1,9 @@
 import Sort from "../../sort";
 
 export default class Bubble extends Sort {
-  sort(originalItems) {
+  sort(originalItems, reverseFlag = false) {
+    if (reverseFlag) this.comparator.reverse();
+
     const items = [...originalItems];
 
     let flag;
@@ -10,6 +12,7 @@ export default class Bubble extends Sort {
       flag = false;
 
       for (let j = 0; j < items.length - i; j += 1) {
+        // [1, 2, 3, 4, 5] =>
         if (this.comparator.greaterThan(items[j], items[j + 1])) {
           flag = true;
 
@@ -18,8 +21,14 @@ export default class Bubble extends Sort {
         }
       }
 
-      if (!flag) return items;
+      if (!flag) {
+        if (reverseFlag) this.comparator.reverse();
+
+        return items;
+      }
     }
+
+    if (reverseFlag) this.comparator.reverse();
 
     return items;
   }

@@ -1,7 +1,9 @@
 import Sort from "../../sort";
 
 export default class Quick extends Sort {
-  sort(originalItems) {
+  sort(originalItems, reverseFlag = false) {
+    if (reverseFlag) this.comparator.reverse();
+
     if (originalItems.length <= 1) return originalItems;
 
     const items = [...originalItems];
@@ -26,6 +28,8 @@ export default class Quick extends Sort {
 
     const sortedLeftItems = this.sort(leftItems);
     const sortedRightItems = this.sort(rightItems);
+
+    if (reverseFlag) this.comparator.reverse();
 
     return sortedLeftItems.concat(centerItems, sortedRightItems);
   }

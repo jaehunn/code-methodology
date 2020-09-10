@@ -14,6 +14,8 @@ describe("Sort 클래스", () => {
     negDesc: [-1, -2, -3, -4, -5],
   };
 
+  const REVERSE = true;
+
   const { asc, desc, eq, negAsc, negDesc } = data;
 
   let sorter;
@@ -37,7 +39,14 @@ describe("Sort 클래스", () => {
       expect(selectionSorter.sort(negDesc)).toEqual(negAsc);
     });
 
-    it("내림차순 정렬", () => {});
+    // need to reverse free
+    it("내림차순 정렬", () => {
+      expect(selectionSorter.sort(asc, REVERSE)).toEqual(desc);
+      expect(selectionSorter.sort(desc, REVERSE)).toEqual(desc);
+      expect(selectionSorter.sort(eq, REVERSE)).toEqual(eq);
+      expect(selectionSorter.sort(negAsc, REVERSE)).toEqual(negDesc);
+      expect(selectionSorter.sort(negDesc, REVERSE)).toEqual(negDesc);
+    });
   });
 
   describe("Insertion 클래스", () => {
@@ -51,7 +60,13 @@ describe("Sort 클래스", () => {
       expect(insertionSorter.sort(negDesc)).toEqual(negAsc);
     });
 
-    it("내림차순 정렬", () => {});
+    it("내림차순 정렬", () => {
+      expect(insertionSorter.sort(asc, REVERSE)).toEqual(desc);
+      expect(insertionSorter.sort(desc, REVERSE)).toEqual(desc);
+      expect(insertionSorter.sort(eq, REVERSE)).toEqual(eq);
+      expect(insertionSorter.sort(negAsc, REVERSE)).toEqual(negDesc);
+      expect(insertionSorter.sort(negDesc, REVERSE)).toEqual(negDesc);
+    });
   });
 
   describe("Bubble 클래스", () => {
@@ -65,7 +80,13 @@ describe("Sort 클래스", () => {
       expect(bubbleSorter.sort(negDesc)).toEqual(negAsc);
     });
 
-    it("내림차순 정렬", () => {});
+    it("내림차순 정렬", () => {
+      expect(bubbleSorter.sort(asc, REVERSE)).toEqual(desc);
+      expect(bubbleSorter.sort(desc, REVERSE)).toEqual(desc);
+      expect(bubbleSorter.sort(eq, REVERSE)).toEqual(eq);
+      expect(bubbleSorter.sort(negAsc, REVERSE)).toEqual(negDesc);
+      expect(bubbleSorter.sort(negDesc, REVERSE)).toEqual(negDesc);
+    });
   });
 
   describe("Merge 클래스", () => {
@@ -79,7 +100,13 @@ describe("Sort 클래스", () => {
       expect(mergeSorter.sort(negDesc)).toEqual(negAsc);
     });
 
-    it("내림차순 정렬", () => {});
+    it("내림차순 정렬", () => {
+      expect(mergeSorter.sort(desc, REVERSE)).toEqual(desc);
+      expect(mergeSorter.sort(desc, REVERSE)).toEqual(desc);
+      expect(mergeSorter.sort(eq, REVERSE)).toEqual(eq);
+      expect(mergeSorter.sort(negAsc, REVERSE)).toEqual(negDesc);
+      expect(mergeSorter.sort(negDesc, REVERSE)).toEqual(negDesc);
+    });
   });
 
   describe("Quick 클래스", () => {
@@ -93,6 +120,12 @@ describe("Sort 클래스", () => {
       expect(quickSorter.sort(negDesc)).toEqual(negAsc);
     });
 
-    it("내림차순 정렬", () => {});
+    it("내림차순 정렬", () => {
+      expect(quickSorter.sort(desc, REVERSE)).toEqual(desc);
+      expect(quickSorter.sort(desc, REVERSE)).toEqual(desc);
+      expect(quickSorter.sort(eq, REVERSE)).toEqual(eq);
+      expect(quickSorter.sort(negAsc, REVERSE)).toEqual(negDesc);
+      expect(quickSorter.sort(negDesc, REVERSE)).toEqual(negDesc);
+    });
   });
 });

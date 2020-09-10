@@ -1,7 +1,9 @@
 import Sort from "../../sort";
 
 export default class Insertion extends Sort {
-  sort(originalItems) {
+  sort(originalItems, reverseFlag = false) {
+    if (reverseFlag) this.comparator.reverse();
+
     const items = [...originalItems];
 
     for (let i = 0; i < items.length; i += 1) {
@@ -13,6 +15,8 @@ export default class Insertion extends Sort {
         c -= 1;
       }
     }
+
+    if (reverseFlag) this.comparator.reverse();
 
     return items;
   }

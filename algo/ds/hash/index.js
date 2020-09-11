@@ -1,67 +1,67 @@
 import LinkedList from "../linkedList";
 
-const defaultHashTableSize = 32;
+const DEFAULT_SIZE = 32;
 
 export default class HashTable {
-  constructor(hashTableSize = defaultHashTableSize) {
-    this.buckets = Array(hashTableSize)
+  constructor(size = DEFAULT_SIZE) {
+    this.buckets = Array(size)
       .fill(null)
       .map(() => new LinkedList());
 
     this.keys = {};
   }
 
-  hash(key) {
-    const hash = Array.from(key).reduce(
-      (hashAccumulator, keySymbol) => hashAccumulator + keySymbol.charCodeAt(0),
-      0
-    );
+  // key is string
+  getHash(key) {
+    // ascii sum
+    const hash = Array.from(key).reduce((acc, char) => acc + char.charCodeAt(0), 0);
 
-    // normalization
-    return hash % this.buckets.length;
+    // normalize
+    return hash % this.buckets.length; // hash % size
   }
 
+  // value = { key, value }
   set(key, value) {
-    const keyHash = keyHash(key);
+    const hash = this.getHash(key);
 
-    this.keys[key] = keyHash; // keys['string'] = keyHash
+    // keys = { ket string: hash }
+    this.keys[key] = hash;
 
-    const bucketLinkedList = this.buckets[keyHash]; // find list
-    const node = bucketLinkedList.find({
-      callback: (nodeValue) => nodeValue.key === key,
-    });
+    // get hash list
+    const list = this.buckets[hash];
 
-    if (!node) {
-      bucketLinkedList.append({ key, value });
-    } else {
-      node.value.value = value;
-    }
+    // same string
+    const node = list.find({ callback: (nodeValue) => nodeValue.key === key }); // node: { key, { key, value} }
+
+    // unfound
+    if (!node) list.append({ key, value });
+    else node.value.value = value; // update
   }
 
   delete(key) {
-    const keyHash = this.hash(key);
+    // 1. keys
     delete this.keys[key];
 
-    const bucketLinkedList = this.buckets[keyHash];
-    const node = bucketLinkedList.find({
-      callback: (nodeValue) => nodeValue.key === key,
-    });
+    // 2. buckets
+    const hash = this.getHash(key);
+    const list = this.buckets[hash];
+    const node = list.find({ callback: (nodeValue) => nodeValue.key === key });
 
-    if (!node) return bucketLinkedList.delete(node.value);
+    if (node) return list.delete(node.value);
 
+    // failed
     return null;
   }
 
   get(key) {
-    const keyHash = this.hash(key);
-    const bucketLinkedList = this.buckets[keyHash];
-    const node = bucketLinkedList.find({
-      callback: (nodeValue) => nodeValue.key === key,
-    });
+    const hash = this.getHash(key);
+    const list = this.buckets[hash];
+    const node = list.find({ callback: (nodeValue) => nodeValue.key === key });
 
     return node ? node.value.value : undefined;
   }
 
+  // no prototype chain
   has(key) {
     return Object.hasOwnProperty.call(this.keys, key);
   }

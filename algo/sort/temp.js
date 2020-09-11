@@ -1,61 +1,3 @@
-// quick
-function quick(items, comparator = asc, s = 0, e = items.length - 1) {
-  // size 1, return
-  if (s >= e) return;
-
-  let p = s;
-  let l = s + 1;
-  let r = e;
-
-  // divide
-  while (l <= r) {
-    while (l <= e && comparator(items[l], items[p])) l += 1;
-    while (r > s && comparator(items[p], items[r])) r -= 1;
-
-    if (l > r) {
-      [items[p], items[r]] = [items[r], items[p]];
-    } else {
-      [items[l], items[r]] = [items[r], items[l]];
-    }
-  }
-
-  // conquer
-  // pivot -> right Index
-  quick(items, comparator, s, r - 1);
-  quick(items, comparator, r + 1, e);
-
-  return items;
-}
-
-function _quick(originalItems) {
-  if (originalItems.length <= 1) return originalItems;
-
-  const items = [...originalItems];
-
-  let leftItems = [];
-  let rightItems = [];
-
-  const pivot = items.shift();
-  let centerItems = [pivot];
-
-  while (items.length) {
-    let currentItem = items.shift();
-
-    if (this.comparator.equal(currentItem, pivot)) {
-      centerItems.push(currentItem);
-    } else if (this.comparator.lessThan(currentItem, pivot)) {
-      leftItems.push(currentItem);
-    } else {
-      rightItems.push(currentItem);
-    }
-  }
-
-  let sortedLeftItems = this.sort(leftItems);
-  let sortedRightItems = this.sort(rightItems);
-
-  return sortedLeftItems.concat(centerItems, sortedRightItems);
-}
-
 // @see https://m.blog.naver.com/ndb796/221228342808
 // @see https://github.com/trekhleb/javascript-algorithms/blob/master/src/algorithms/sorting/heap-sort/HeapSort.js
 
@@ -146,8 +88,3 @@ function _quick(originalItems) {
     }
   }
 }
-
-console.log(1 ^ 1);
-console.log(0 ^ 1);
-console.log(1 ^ 0);
-console.log(0 ^ 0);

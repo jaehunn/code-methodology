@@ -5,6 +5,16 @@ export default class Stack {
     this.linkedList = new LinkedList();
   }
 
+  push(value) {
+    this.linkedList.prepend();
+  }
+
+  pop() {
+    const removedHead = this.linkedList.deleteHead();
+
+    return removeHead ? removedHead.value : null;
+  }
+
   isEmpty() {
     return !this.linkedList.head;
   }
@@ -15,21 +25,12 @@ export default class Stack {
     return this.linkedList.head.value;
   }
 
-  push(value) {
-    this.linkedList.prepend(value);
-  }
-
-  pop() {
-    const removedHead = this.linkedList.deleteHead();
-
-    return removedHead ? removedHead.value : null;
-  }
-
   toArray() {
     return this.linkedList.toArray().map((node) => node.value);
   }
 
+  // delegate to LinkedList toString()
   toString(callback) {
-    return this.linkedList.toString(callback); // delegation
+    return this.linkedList.toString(callback);
   }
 }

@@ -5,27 +5,28 @@ export default class Queue {
     this.linkedList = new LinkedList();
   }
 
-  isEmpty() {
-    return !this.linkedList.head;
-  }
-
-  peek() {
-    if (!this.linkedList.head) return null;
-
-    return this.linkedList.head.value;
-  }
-
   enqueue(value) {
-    this.linkedList.append(value);
+    return this.linkedList.append(value);
   }
 
   dequeue() {
     const removedHead = this.linkedList.deleteHead();
 
-    return removedHead ? removedHead.value : null;
+    return removedHead ? removedHead.value : nul;
   }
 
+  isEmpty() {
+    return !this.linkedList.head;
+  }
+
+  peek() {
+    if (this.isEmpty()) return null;
+
+    return this.linkedList.head.value;
+  }
+
+  // delegate to LinkedList toString()
   toString(callback) {
-    return this.linkedList.toString(callback); // delegation
+    return this.linkedList.toString(callback);
   }
 }

@@ -11,7 +11,7 @@ class LinkedListNode {
   }
 }
 
-export default class LinkedList {
+export default class LinkedListLinkedList {
   constructor(compareFunction) {
     this.head = null;
     this.tail = null;

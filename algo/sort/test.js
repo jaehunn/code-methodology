@@ -4,6 +4,7 @@ import Insertion from "./insertion";
 import Bubble from "./bubble";
 import Merge from "./merge";
 import Quick from "./quick";
+import HeapSort from "./heap";
 
 describe("Sort 클래스", () => {
   const data = {
@@ -126,6 +127,14 @@ describe("Sort 클래스", () => {
       expect(quickSorter.sort(eq, REVERSE)).toEqual(eq);
       expect(quickSorter.sort(negAsc, REVERSE)).toEqual(negDesc);
       expect(quickSorter.sort(negDesc, REVERSE)).toEqual(negDesc);
+    });
+  });
+
+  describe("Heap 클래스", () => {
+    const heapSorter = new HeapSort();
+
+    it("오름차순 정렬", () => {
+      expect(heapSorter.sort(desc)).toEqual(asc);
     });
   });
 });

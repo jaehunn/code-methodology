@@ -135,17 +135,14 @@ const log = console.log;
 
   // set: str1 <- str2
   function union(str1, str2) {
-    find(str1);
-    find(str2);
+    str1 = find(str1);
+    str2 = find(str2);
 
-    if (set[str1] !== set[str2]) {
+    // 2. 집합, 카운트 업데이트 이슈
+    if (str1 !== str2) {
       set[str2] = set[str1];
 
-      let cntStr1 = cnt[str1];
-      let cntStr2 = cnt[str2];
-
-      cnt[str1] += cntStr2;
-      cnt[str2] += cntStr1;
+      cnt[str1] += cnt[str2]; // set root
     }
 
     function find(str) {
@@ -153,6 +150,8 @@ const log = console.log;
 
       let root = find(set[str]);
       set[str] = root;
+
+      return root;
     }
   }
 
@@ -160,7 +159,6 @@ const log = console.log;
   console.log(set, cnt);
   solve("C", "D");
   console.log(set, cnt);
-
   solve("B", "C");
   console.log(set, cnt);
 }

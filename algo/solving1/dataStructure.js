@@ -1,6 +1,5 @@
 const log = console.log;
 
-// [1]
 // 2920
 {
   function solve(items) {
@@ -38,7 +37,6 @@ const log = console.log;
   log(solve([5, 4, 3, 2, 1], 13));
 }
 
-// [2]
 // 1874
 {
   function solve(items) {

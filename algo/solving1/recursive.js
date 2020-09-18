@@ -1,4 +1,6 @@
-// 1.
+// 2147 피보나치 수
+
+// 1074 Z
 {
   let cnt = 0;
   function solve(size, x, y, posX, posY) {
@@ -20,7 +22,7 @@
   solve(2 ** 2, 0, 0, 3, 2); // 4 * 4 size
 }
 
-// 2.
+// 7490 0 만들기
 {
   function solve(items) {
     let opsItems = [];

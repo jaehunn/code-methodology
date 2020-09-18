@@ -1,10 +1,11 @@
 const log = console.log;
 
-// 2920
+// Base Url = https://www.acmicpc.net/problem/[number]
+
+// 2920 음계
 {
   function solve(items) {
-    let asc = true;
-    let desc = true;
+    let asc = (desc = true);
 
     for (let i = 1; i < items.length; i += 1) {
       if (items[i] > items[i - 1]) desc = false;
@@ -13,11 +14,9 @@ const log = console.log;
 
     return desc ? "desc" : asc ? "asc" : "mixed";
   }
-
-  log(solve([5, 4, 3, 2, 1]));
 }
 
-// 2790
+// 2798 블랙잭
 {
   function solve(items, target) {
     let result = 0;
@@ -33,11 +32,9 @@ const log = console.log;
 
     return result;
   }
-
-  log(solve([5, 4, 3, 2, 1], 13));
 }
 
-// 1874
+// 1874 스택 수열
 {
   function solve(items) {
     let stack = [];
@@ -62,11 +59,9 @@ const log = console.log;
 
     return result;
   }
-
-  log(solve([3, 5, 6, 4, 2, 1]));
 }
 
-// 1966
+// 1966 프린터 큐
 {
   function solve(items, pos) {
     let queue = [];
@@ -86,11 +81,9 @@ const log = console.log;
 
     return -1;
   }
-
-  log(solve([1, 1, 9, 1, 1, 1], 3));
 }
 
-// 5397
+// 5397 키로거
 {
   function solve(str) {
     const items = Array.from(str);
@@ -108,11 +101,30 @@ const log = console.log;
 
     return leftItems.concat(rightItems);
   }
-
-  console.log(solve("<<BP<A>>Cd-"));
 }
 
-// 1920
+// 1920 수 찾기
+{
+  // assume, sorted items
+  function solve(items, target) {
+    let s = 0;
+    let e = items.length - 1;
+
+    while (s <= e) {
+      const m = ((e + s) / 2) << 0;
+
+      if (items[m] === target) return m;
+      if (items[m] < target) s = m + 1;
+      else e = m - 1;
+    }
+
+    return -1;
+  }
+
+  console.log(solve([1, 2, 3, 4, 5], 4));
+}
+
+// 4195 친구 네트워크 - 유니온 파인드
 {
   let set = {};
   let cnt = {};
@@ -152,11 +164,4 @@ const log = console.log;
       return root;
     }
   }
-
-  solve("A", "B");
-  console.log(set, cnt);
-  solve("C", "D");
-  console.log(set, cnt);
-  solve("B", "C");
-  console.log(set, cnt);
 }

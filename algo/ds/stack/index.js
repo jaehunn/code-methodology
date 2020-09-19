@@ -6,7 +6,7 @@ export default class Stack {
   }
 
   push(value) {
-    this.linkedList.prepend();
+    this.linkedList.prepend(value);
   }
 
   pop() {

@@ -1,22 +1,44 @@
 // 2750 수 정렬하기
 {
+  function solve(items) {
+    for (let i = 0; i < items.length; i += 1) {
+      let c = i;
+
+      while (c && items[c - 1] > items[c]) {
+        [items[c - 1], items[c]] = [items[c], items[c - 1]];
+
+        c -= 1;
+      }
+    }
+
+    return items;
+  }
 }
 
 // 1427 소트인사이드
 {
+  function solve(str) {
+    return str.split("").sort((a, b) => b - a);
+  }
 }
 
 // 10814 나이순 정렬
 {
+  function solve(profileItems) {
+    return profileItems.map((v) => v.split(" ")).sort((a, b) => +a[0] - +b[0]);
+  }
 }
 
 // 11650 좌표 정렬하기
 {
+  function solve(posItems) {
+    return posItems.sort((a, b) => a[0] - b[0]).sort((a, b) => a[0] === b[0] && a[1] - b[1]);
+  }
 }
 
 // 10989 수 정렬하기3
 {
-  function solving(items) {
+  function solve(items) {
     const cnt = Array(items.length).fill(0);
     items.forEach((v) => (cnt[v] += 1));
 
@@ -33,14 +55,33 @@
     // 6: [12] (1)
     // 10: [13 ...13] (1)
   }
-
-  console.log(solving([1, 5, 2, 3, 3, 3, 2, 1, 1, 1, 5, 6, 10]));
 }
 
 // 2751 수 정렬하기2
 {
+  function solve(items) {
+    if (items.length === 1) return items;
+
+    let mid = (items.length / 2) << 0;
+
+    return merge(solve(items.slice(0, mid)), solve(items.slice(mid, items.length)));
+
+    function merge(leftItems, rightItems) {
+      const result = [];
+      while (leftItems.length || rightItems.length) {
+        if (!rightItems.length || leftItems[0] <= rightItems[0]) {
+          result.push(leftItems.shift());
+        } else result.push(rightItems.shift());
+      }
+
+      return result;
+    }
+  }
 }
 
 // 11004 k번째 수
 {
+  function solve(items, n) {
+    return items.sort((a, b) => a - b).find((v, i) => i === n - 1);
+  }
 }

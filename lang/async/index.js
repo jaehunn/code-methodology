@@ -358,6 +358,157 @@ clear();
 
 // 4. chaining
 {
+  // then().then().then() ...
+  // then() fufilled return value -> next then fulfilled value
+  {
+    var f = Promise.resolve(21);
+
+    var g = f.then(function (v) {
+      v; // 21
+
+      return v * 2;
+    });
+
+    g.then(function (v) {
+      v; // 42
+    });
+  }
+
+  {
+    var f = Promise.resolve(21);
+
+    f.then(function (v) {
+      v; // 21
+
+      return new Promise(function (res) {
+        res(v * 2);
+      });
+    }).then(function (v) {
+      v; // 42
+    });
+  }
+
+  {
+    var f = Promise.resolve(21);
+
+    f.then(function (v) {
+      v; // 21
+
+      return new Promise(function (res) {
+        setTimeout(function () {
+          res(v * 2);
+        }, 100);
+      });
+    }).then(function (v) {
+      v; //42
+    });
+  }
+
+  // delay-promise
+  {
+    function delay(time) {
+      return new Promise(function (res) {
+        setTimeout(res, time);
+      });
+    }
+
+    // no resolve message
+    delay(100)
+      .then(function () {
+        // 100ms
+
+        return delay(200);
+      })
+      .then(function () {
+        // delay promise replace to then promise
+        // 200ms
+      })
+      .then(function () {
+        // 0ms
+
+        return delay(50);
+      })
+      .then(function () {
+        // 50ms
+      });
+  }
+
+  // delay-promise - channel
+  {
+    function req(url) {
+      return new Promise(function (res) {
+        ajax(url, res); // callback <- res
+      });
+    }
+
+    req("http://some.url.1/")
+      .then(function (response) {
+        return req("http://some.url.2/?v=" + response);
+      })
+      .then(function (response2) {
+        // ...
+      });
+  }
+
+  // promise error unit: promise
+  {
+    req("http://some.url.1/")
+      .then(function (response) {
+        throw new Error("error");
+      })
+      .then(
+        function () {
+          // never work
+        },
+        function (err) {
+          err; // error (catch)
+
+          return 42; // -> pending
+        }
+      )
+      .then(function (msg) {
+        msg; // 42 (fulfilled)
+      }); // reject callback is default callback
+
+    // ex
+    function default_rej_cb(err) {
+      throw err;
+    }
+  }
+
+  // resolve, fulfill, reject
+  {
+    var fulfill = Promise.resolve(42);
+    var reject = Promise.reject("error");
+
+    var rejected = {
+      then: function (res, rej) {
+        rej("error");
+      },
+    };
+
+    var f = Promise.resolve(rejected); // thenable -> 'error' (reject)
+
+    // resolve: fulfill or reject
+  }
+
+  {
+    var rejected = new Promise(function (res, rej) {
+      res(Promise.rej("error"));
+    });
+
+    rejected.then(
+      function () {
+        // never work
+      },
+      function (err) {
+        err; // "error"
+      }
+    );
+
+    // new Promise(function (resolve, reject) { })
+    // then(function fulfilled() { }, function reject() { })
+  }
 }
 
 // 5. error handling

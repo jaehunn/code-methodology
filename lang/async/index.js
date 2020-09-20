@@ -513,6 +513,116 @@ clear();
 
 // 5. error handling
 {
+  // try catch
+  {
+    function f() {
+      setTimeout(function () {
+        g.e(); // global error
+      }, 1000);
+    }
+
+    try {
+      f();
+    } catch (err) {
+      // never
+    }
+  }
+
+  // error-first callback
+  {
+    function f(cb) {
+      setTimeout(function () {
+        // try -> only sync value
+        try {
+          var x = g.e();
+
+          cb(null, x);
+        } catch (e) {
+          cb(e);
+        }
+      }, 100);
+    }
+
+    f(function (e, v) {
+      if (e) error(e);
+      else log(v);
+    });
+  }
+
+  // promise: split callback
+  {
+    var f = Promise.reject("e");
+
+    f.then(
+      function () {
+        // never
+      },
+      function (e) {
+        // e
+      }
+    );
+  }
+
+  {
+    var f = Promise.resolve(42);
+
+    // f already resolved 42
+    f.then(
+      function (n) {
+        log(n.toLowerCase()); // error
+      },
+      function (e) {
+        // never (f reject callback, not f.then())
+      }
+    );
+  }
+
+  // 1. catch (chain issue)
+  {
+    var f = Promise.resolve(42);
+
+    f.then(function (v) {
+      log(v.toLowerCase()); // error
+    }).catch(function (e) {
+      // error catch (f error + f.then() error)
+    });
+
+    // if catch() callback error?
+  }
+
+  // 2. (timer)
+
+  // 3. done
+  {
+    var f = Promise.resolve(42);
+
+    f.then(function (v) {
+      log(v.toLowerCase()); // error
+    }).done(null, function (e) {
+      log(e);
+    });
+
+    // if catch() callback error? -> global
+  }
+
+  // -> browser function: tracking garbage collection
+  // promise disapear -> tracking
+
+  // promise
+  // 1. error callback -> log
+  // 2. defer() -> log on/off
+  {
+    var f = Promise.reject("e").defer(); // promise chaining (no log)
+
+    g(42).then(
+      function () {
+        return f;
+      },
+      function (e) {
+        // e (f error catch)
+      }
+    );
+  }
 }
 
 // 6. pattern

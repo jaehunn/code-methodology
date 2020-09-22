@@ -1,5 +1,6 @@
 const log = console.log;
 const clear = console.clear;
+const error = console.error;
 
 // async
 // 1. gap
@@ -160,9 +161,6 @@ clear();
   });
 
   F();
-
-  // A F B C E D
-  // if A or C is not async (A not async), A B C E F D
 }
 
 // 3. event branch
@@ -173,8 +171,6 @@ clear();
     });
   });
 
-  // depend on A B logic
-  // if A B fail, C D fail
   C(function () {
     D(function () {
       // ...
@@ -184,11 +180,9 @@ clear();
 
 // 4. reliability (IOC to third party)
 {
-  A("data", function () {
-    third.func(); // control -> third
+  T("data", function () {
+    // ...
   });
-
-  // if third throw error
 }
 
 // promise
@@ -892,6 +886,19 @@ clear();
 
   // 인자 스프레드하기
   {
+    function getY(x) {
+      return new Promise(function (res, rej) {
+        setTimeout(function () {
+          res(3 * x - 1);
+        }, 100);
+      });
+    }
+
+    function foo(bar, baz) {
+      var x = bar * baz;
+
+      return [Promise.resolve(x), getY(x)];
+    }
     // var x 나 var y 는 불필요한 오버헤드다.
     function spread(fn) {
       return Function.apply.bind(fn, null);
@@ -902,5 +909,138 @@ clear();
         log(x, y);
       })
     );
+  }
+
+  // 개선
+  {
+    // 배열을 인자로 받고 각 요소를 출력
+    Promise.all(foo(10, 20)).then(
+      Function.apply.bind(function (x, y) {
+        log(x, y);
+      }, null)
+    );
+  }
+
+  // 개선2
+  {
+    Promise.all(foo(10, 20)).then(function (msgs) {
+      var [x, y] = msgs;
+
+      log(x, y);
+    });
+
+    Promise.all(foo(10, 20)).then(function ([x, y]) {
+      log(x, y);
+    });
+  }
+
+  // 단일 귀결
+  // 프라미스는 단 한번만 귀결된다.
+  // 여러번 발생하는 이벤트에 대응하는 케이스
+  {
+    var f = new Promise(function (res, rej) {
+      click("#btn", res);
+    });
+
+    f.then(function (e) {
+      var id = e.currentTarget.id;
+
+      return request("http://some.url.1/?id=" + id);
+    }).then(function (txt) {
+      log(txt);
+    });
+
+    // 위에서 버튼을 최초로 클릭하면 귀결되버려 두번째 resolve() 는 묻힌다.
+    // 따라서, 각 이벤트에 대해 새 프라미스 연쇄 전체를 생성시켜야한다.
+  }
+
+  {
+    click("#btn", function (e) {
+      var id = e.currentTarget.id;
+
+      request("http://some.url.1/?id=" + id).then(function (txt) {
+        log(txt);
+      });
+    });
+
+    // 클릭이벤트에 대해 새로운 프라미스 시퀀스가 생긴다.
+    // 보다시피 관심사가 분리되지않아 적잖이 어색한 패턴이다.
+  }
+
+  // 타성
+  // 기존의 콜백체계를 따르는 코드를 접근 방식 자체가 다른 프라미스 코드로 바꾸는데에 많은 어려움이 있을것이다.
+  {
+    function foo(x, y, cb) {
+      ajax("http://some.url.1/?x=" + x + "&y=" + y), cb;
+    }
+
+    foo(11, 31, function (err, txt) {
+      if (err) error(err);
+      else log(txt);
+    });
+
+    // ajax 도 콜백식이 아닌 프라미스 유틸로 바꿔야한다.
+    // 유틸을 직접 작성해도 좋지만, 콜백 유틸을 프라미스로 감싸는 부담이있다.
+    {
+      if (!Promise.wrap) {
+        Promise.wrap = function (fn) {
+          return function () {
+            var args = [].slice.call(arguments);
+
+            return new Promise(function (res, rej) {
+              fn.apply(
+                null,
+                args.concat(function (err, v) {
+                  if (err) rej(err);
+                  else res(v);
+                })
+              );
+            });
+          };
+        };
+      }
+
+      var request = Promise.wrap(ajax);
+
+      request("http://some.url.1/").then();
+    }
+  }
+
+  // 취소 불가
+  // 프라미스를 생성하고 처리기를 등록하면 도중에 도중에 작업을 의미없게 만들더라도 외부에서 프라미스의 진행을 멈출 수 없다.
+  {
+    var f = foo(42);
+
+    Promise.race([f, timeoutPromise(3000)]).then(doSomething, handleError);
+
+    f.then(function () {
+      // 타임아웃되어도 실행된다.
+    });
+
+    // f 입장에서 타임아웃은 외부요소로 계속실행된다. 이는 의도한 바가 아닐것이다.
+  }
+
+  // 귀결 콜백
+  {
+    var Flag = true;
+    var f = foo(42);
+
+    Promise.race([
+      f,
+      timeoutPromise(3000).catch(function (e) {
+        Flag = false;
+        throw e;
+      }),
+    ]).then(doSomething, handleError);
+
+    f.then(function () {
+      if (Flag) {
+        // 플래그가 참일때만 실행!
+      }
+    });
+
+    // 이런 코딩은 사실 피하는 편이 좋다.
+    // 피할 수 없는 상황을 자꾸 피하려고하면 코드가 더러워진다.
+    // 프라미스 취소는 더 상위 프라미스 추상화 레벨에서 구현해야함을 알 수 있다.
   }
 }

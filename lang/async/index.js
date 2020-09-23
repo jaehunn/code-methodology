@@ -186,8 +186,7 @@ clear();
 }
 
 // promise
-// 1. concepts
-// future value (after + now -> after)
+// 1. future value
 {
   function f(getX, getY, cb) {
     var _x, _y;
@@ -195,23 +194,22 @@ clear();
     getX(function (x) {
       _x = x;
 
-      if (_y) cb(_x + _y); // normalize
+      if (_y) cb(_x + _y);
     });
 
     getY(function (y) {
       _y = y;
 
-      if (_x) cb(_x + _y); // normalize
+      if (_x) cb(_x + _y);
     });
   }
 
-  // v be inferred
   f(fetchX, fetchY, function (v) {
-    log(v);
+    log(v); // v: future value
   });
 }
 
-// uninversion of control (callback -> caller)
+// 2. uninversion of control
 {
   function f(x) {
     // ...
@@ -233,20 +231,15 @@ clear();
   baz(evt); // listening
 }
 
-// 2. thenable
+// 3. thenable
 {
   if (p !== null && (typeof p === "object" || typeof p === "function") && typeof p.then === "function") {
     log("thenable");
   } else log("no thenable");
-
-  // promise is thenable
-  // thenable may not promise
 }
 
-// 3. reliability
+// 4. reliability
 {
-  // (1) then() => asynchronous, sequentially
-  // (2) resolve(), reject() => new promise
   {
     f.then(function () {
       f.then(function () {
@@ -260,7 +253,7 @@ clear();
     });
   }
 
-  // bad
+  // problem
   {
     var e = new Promise(function (res) {
       res("B");
@@ -281,31 +274,96 @@ clear();
     g.then(function (v) {
       // ...
     });
-
-    // A B
-    // job queue: g callback -> f callback
   }
 
-  // (3) always promise is resolved(fufilled or reject)
-  // (4) promise always resolve in only once
-  // (5) type error or reference error -> promise call reject() (synchronous)
-  // (6) then() error -> next then()
+  // solve, abstraction(race level)
   {
-    var f = new Promise(function (res, rej) {
-      res(42); // already resolved
-    });
+    function timeout(ms) {
+      return new Promise(function (res, rej) {
+        setTimeout(function () {
+          rej("Time out");
+        }, ms);
+      });
+    }
 
-    f.then(
+    Promise.race([f(), timeout(3000)]).then(
       function () {
-        throw new error();
+        // fulfilled
       },
-      function (err) {
-        // never work
+      function (e) {
+        // reject
       }
     );
   }
 
-  // (7) Promise.resolve()
+  // only one resolve, one handle
+  {
+    function f(n) {
+      return new Promise(function (res, rej) {
+        setTimeout(function () {
+          if (n % 2) res("Success");
+
+          rej("Time out");
+        }, 100);
+      });
+    }
+
+    f.then(
+      function (v) {
+        log(v);
+      },
+      function (e) {
+        log(e);
+      }
+    );
+
+    f.then(
+      function (v) {
+        log(v);
+      },
+      function (e) {
+        log(e);
+      }
+    );
+  }
+
+  // error
+  {
+    var f = new Promise(function (res, rej) {
+      throw Error("error");
+
+      resolve(41);
+    });
+
+    f.then(
+      function () {
+        // never
+      },
+      function (e) {
+        // error
+      }
+    );
+  }
+
+  // immutable resolve
+  {
+    var f = new Promise(function (res, rej) {
+      res(42);
+    });
+
+    f.then(
+      function (v) {
+        throw Error("error");
+
+        log(v);
+      },
+      function (e) {
+        // never
+      }
+    );
+  }
+
+  // Promise.resolve()
   {
     var f = new Promise(function (res) {
       res(42);
@@ -315,7 +373,6 @@ clear();
 
     f === g;
 
-    // Promise.resolve(no promise) => promise
     var _f = Promise.resolve(42);
     var _g = Promise.resolve(_f);
 
@@ -352,8 +409,6 @@ clear();
 
 // 4. chaining
 {
-  // then().then().then() ...
-  // then() fufilled return value -> next then fulfilled value
   {
     var f = Promise.resolve(21);
 
@@ -431,7 +486,7 @@ clear();
   {
     function req(url) {
       return new Promise(function (res) {
-        ajax(url, res); // callback <- res
+        ajax(url, res);
       });
     }
 
@@ -455,19 +510,14 @@ clear();
           // never work
         },
         function (err) {
-          err; // error (catch)
+          err; // catch
 
-          return 42; // -> pending
+          return 42;
         }
       )
       .then(function (msg) {
-        msg; // 42 (fulfilled)
-      }); // reject callback is default callback
-
-    // ex
-    function default_rej_cb(err) {
-      throw err;
-    }
+        msg; // 42
+      });
   }
 
   // resolve, fulfill, reject
@@ -481,9 +531,7 @@ clear();
       },
     };
 
-    var f = Promise.resolve(rejected); // thenable -> 'error' (reject)
-
-    // resolve: fulfill or reject
+    var f = Promise.resolve(rejected);
   }
 
   {
@@ -499,19 +547,15 @@ clear();
         err; // "error"
       }
     );
-
-    // new Promise(function (resolve, reject) { })
-    // then(function fulfilled() { }, function reject() { })
   }
 }
 
 // 5. error handling
 {
-  // try catch
   {
     function f() {
       setTimeout(function () {
-        g.e(); // global error
+        throw Error("error");
       }, 1000);
     }
 
@@ -526,7 +570,6 @@ clear();
   {
     function f(cb) {
       setTimeout(function () {
-        // try -> only sync value
         try {
           var x = g.e();
 
@@ -560,13 +603,12 @@ clear();
   {
     var f = Promise.resolve(42);
 
-    // f already resolved 42
     f.then(
       function (n) {
         log(n.toLowerCase()); // error
       },
       function (e) {
-        // never (f reject callback, not f.then())
+        // never
       }
     );
   }
@@ -578,10 +620,8 @@ clear();
     f.then(function (v) {
       log(v.toLowerCase()); // error
     }).catch(function (e) {
-      // error catch (f error + f.then() error)
+      // error catch
     });
-
-    // if catch() callback error?
   }
 
   // 2. (timer)
@@ -595,25 +635,18 @@ clear();
     }).done(null, function (e) {
       log(e);
     });
-
-    // if catch() callback error? -> global
   }
 
-  // -> browser function: tracking garbage collection
-  // promise disapear -> tracking
-
-  // promise
-  // 1. error callback -> log
-  // 2. defer() -> log on/off
+  // 4. defer
   {
-    var f = Promise.reject("e").defer(); // promise chaining (no log)
+    var f = Promise.reject("e").defer();
 
     g(42).then(
       function () {
         return f;
       },
       function (e) {
-        // e (f error catch)
+        // e
       }
     );
   }

@@ -10,7 +10,6 @@ const log = console.log;
     for (let i = 1; i < items.length; i += 1) {
       if (items[i] > items[i - 1]) desc = false;
       else if (items[i] < items[i - 1]) asc = false;
-    }
 
     return desc ? "desc" : asc ? "asc" : "mixed";
   }

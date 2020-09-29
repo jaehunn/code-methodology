@@ -322,3 +322,195 @@ const clear = console.clear;
 }
 
 // generator asynchronous
+{
+  // callback
+  function f(x, y, cb) {
+    ajax("http://some.url.1/?x=" + x + "&y=" + y, cb);
+  }
+
+  f(1, 2, function (e, v) {
+    if (e) log("e");
+    else log(v);
+  });
+
+  // generator
+  function f(x, y) {
+    ajax("http://some.url/?x=" + x + "&y=" + y, function (e, v) {
+      // throw -> generator
+      if (e) it.throw(e);
+      else it.next(v); // response -> generator
+    });
+  }
+
+  function* g() {
+    try {
+      var x = yield f(1, 2); // yield (request) -> f()
+
+      log(x);
+    } catch (e) {
+      log(e);
+    }
+  }
+
+  var it = g();
+
+  it.next();
+}
+
+// throw error
+{
+  function* f() {
+    var x = yield "default";
+
+    yield x.toLowerCase(); // error
+  }
+
+  var it = f();
+
+  it.next().value; // 'default'
+
+  try {
+    it.next(1);
+  } catch (e) {
+    log(e); // TypeError
+  }
+
+  function* g() {
+    var x = yield "default";
+
+    log(x); // no work
+  }
+
+  var it_2 = g();
+
+  it_2.next();
+
+  try {
+    it_2.throw("error"); // throw -> generator
+  } catch (e) {
+    log(e); // error
+  }
+}
+
+// generator + promise
+{
+  // 1) promise -> yield,
+  // 2) promise controls iterator
+
+  function f(x, y) {
+    return request("http://some.url/x=" + x + "&y=" + y); // return promise
+  }
+
+  function* g() {
+    try {
+      var v = yield f(1, 2);
+
+      log(v);
+    } catch (e) {
+      log(e);
+    }
+  }
+
+  var it = g();
+  var p = it.next().value; // return promise
+
+  p.then(
+    function (v) {
+      it.next(v); // controls iterator
+    },
+    function (e) {
+      it.throw(e);
+    }
+  );
+}
+
+// (WIP) standalon utility, run()
+{
+  function* f(x, y) {}
+
+  function run(gen) {
+    var args = [].slice.call(arguments, 1);
+    var it;
+
+    it = gen.apply(this, args); // init
+
+    return Promise.resolve().then(function handleNext(v) {
+      var next = it.next(v);
+
+      return (function handleResult(next) {
+        if (next.done) return next.value;
+
+        return Promise.resolve(next.value).then(handleNext, function handleError(e) {
+          return Promise.resolve(it.throw(e)).then(handleResult);
+        });
+      })(next);
+    });
+  }
+}
+
+// async await
+{
+  function f(x, y) {
+    return request("http://some.url.1/?x=" + x + "&y=" + y);
+  }
+
+  async function main() {
+    try {
+      var v = await f(1, 2);
+
+      log(v);
+    } catch (e) {
+      log(e);
+    }
+  }
+}
+
+// promise concurrency in asynchronous
+{
+  function* f() {
+    var v_1 = yield request("http://some.url.1");
+    var v_2 = yield request("http://some.url.2");
+
+    var v_3 = yield request("http://some.url.3/?v=" + v_1 + "," + v_2);
+
+    log(v_3);
+  }
+
+  run(f); // independent request
+
+  function* g() {
+    var p_1 = request("http://some.url.1");
+    var p_2 = request("http://some.url.2");
+
+    var v_1 = yield p_1;
+    var v_2 = yield p_2;
+
+    var v_3 = yield request("http://some.url.3/?v=" + v_1 + "," + v_2);
+
+    // == Promise.all([request(), request()])
+
+    log(v_3);
+  }
+
+  run(g);
+}
+
+// hide promise
+{
+  function f(url_1, url_2) {
+    return Promise.all([request(url_1), request(url_2)]);
+  }
+
+  function* g() {
+    var r = yield f("http://some.url.1", "http://some.url.2");
+
+    var r_1 = r[0];
+    var r_2 = r[1];
+
+    var r_3 = yield request("http://some.url.3/?v=" + r_1, +"," + r_2);
+
+    log(r_3);
+  }
+
+  run(f);
+}

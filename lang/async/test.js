@@ -1,14 +1,41 @@
 const log = console.log;
 const error = console.error;
 
-console.log([].slice.call([1, 2, 3], 1));
+function* f() {
+  try {
+    yield "B";
+  } catch (err) {
+    log(err);
+  }
 
-function* f(x, y) {
-  return x * y;
+  yield "C";
+
+  throw "D";
 }
 
-var it = f(1, 2);
+function* g() {
+  yield "A";
 
-log(it.next()); // { value: 2, done: true }
+  try {
+    yield* f();
+  } catch (err) {
+    log(, err); // 3
+  }
 
-log(it.next()); // { value: undefined, done: true }
+  yield "E";
+
+  yield* e();
+
+  yield "G";
+}
+
+function* e() {
+  throw "F";
+}
+
+var it = g();
+
+it.next().value; // A
+it.next(1).value; // B
+it.throw(2).value; // error: 2, C
+it.throw(3).value; // error: 3, D

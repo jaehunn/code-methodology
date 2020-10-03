@@ -535,3 +535,156 @@ const clear = console.clear;
 
   run(g);
 }
+
+{
+  function* f() {
+    log("start");
+    yield 3;
+    yield 4;
+    log("end");
+  }
+
+  function* g() {
+    yield 1;
+    yield 2;
+    yield* foo();
+    yield 5;
+  }
+
+  var it = g();
+
+  it.next().value; // 1
+  it.next().value; // 2
+  it.next().value; // start 3
+  it.next().value; // 4
+  it.next().value; // end 5
+}
+
+// message delegation
+{
+  function* f() {
+    yield "B";
+    yield "C";
+
+    return "D";
+  }
+
+  function* g() {
+    yield "A";
+    yield* f();
+    yield "E";
+
+    return "F";
+  }
+
+  var it = g();
+  it.next().value; // A
+  it.next(1).value; // 1, B
+  it.next(2).value; // 2, C
+  it.next(3).value; // 3, D, E
+  it.next(4).value; // 4, F
+}
+
+{
+  function* g() {
+    yield "A";
+    yield* ["B", "C", "D"];
+    yield "E";
+
+    return "F";
+  }
+
+  var it = g();
+  it.next().value; // A
+  it.next(1).value; // 1 B
+  it.next(2).value; // C
+  it.next(3).value; // D
+  it.next(4).value; // undefined, E
+  it.next(5).value; // 5, F
+}
+
+{
+  function* f() {
+    try {
+      yield "B";
+    } catch (err) {
+      log("in f try ", err);
+    }
+
+    yield "C";
+
+    throw "D";
+  }
+
+  function* g() {
+    yield "A";
+
+    try {
+      yield* f();
+    } catch (err) {
+      log("in f", err);
+    }
+
+    yield "E";
+
+    yield* e();
+
+    yield "G";
+  }
+
+  function* e() {
+    throw "F";
+  }
+
+  var it = g();
+
+  it.next().value; // A
+  it.next(1).value; // B
+  it.throw(2).value; // error: 2, C
+  it.next(3).value; // D, E
+
+  try {
+    it.next(4).value;
+  } catch (e) {
+    log(e); // F
+  }
+
+  // G never gonna receive
+}
+
+{
+  function* f() {
+    var r2 = yield request("http://some.url.2");
+    var r3 = yield request("http://some.url.3/v=" + r2);
+
+    return r3;
+  }
+
+  function* g() {
+    var r1 = yield request("http://some.url.1");
+    var r3 = yield* f();
+
+    log(r3);
+  }
+
+  run(g);
+}
+
+// WIP) delegation 'recursive'
+{
+  function* f(v) {
+    if (v > 1) {
+      v = yield* f(v - 1);
+    }
+
+    return yield request("http://some.url/?v=" + v);
+  }
+
+  function* g() {
+    var r1 = yield* f(3);
+
+    log(r1);
+  }
+
+  run(g); // run(f, 3)
+}

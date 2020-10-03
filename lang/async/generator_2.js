@@ -1,123 +1,91 @@
 const log = console.log;
 const clear = console.clear;
 
-// iterable protocol: Symbol.iterator property
-// iterator protocol: next() { return { value, done }; }
+// https://jeonghwan-kim.github.io/2016/12/15/coroutine.html
+{
+  const getId = (cb) => setTimeout(() => cb(1), 1);
+  const getNameById = (id, cb) => setTimeout(() => cb("chris"), 1);
 
-const items = [1, 2, 3];
+  //   getId((id) => {
+  //     getNameById(id, (name) => {
+  //       console.log({ id, name });
+  //     });
+  //   });
+}
+{
+  const getId = () => new Promise((resolve) => setTimeout(() => resolve({ id: 1 }), 1));
+  const getNameById = ({ id }) => new Promise((resolve) => setTimeout(() => resolve({ id, name: "chris" }), 1));
 
-log(Symbol.iterator in items); // true
+  //   getId()
+  //     .then(({ id }) => getNameById({ id }))
+  //     .then((o) => console.log(o));
 
-for (const value of items) {
-  log(value);
+  //   getId().then(getNameById).then(console.log);
 }
 
-// object is not iterable
+{
+  const getId = () => new Promise((resolve) => setTimeout(() => resolve({ id: 1 }), 1));
+  const getNameById = ({ id }) => new Promise((resolve) => setTimeout(() => resolve({ id, name: "chris" }), 1));
 
-const iterator = items[Symbol.iterator](); // return iteartor
+  function* gen() {
+    const id = yield getId();
+    const name = yield getNameById(id);
 
-log("next" in iterator);
-
-for (const value of iterator) {
-  log(value); // iteartor.next().value
-}
-
-// next: item pointer
-let value = items[Symbol.iterator]();
-for (let i = 0; i <= items.length; i += 1) {
-  log(value.next());
-}
-
-// data consumer => for-of, spread operator
-// data provider => iterable
-
-// data consistent traverse
-// iteration protocol -> interaface (consumer, provider)
-
-// generator function: create iterable
-function* gen() {
-  log("first");
-  yield 1;
-
-  log("second");
-  yield 2;
-
-  log("three");
-}
-
-// gen() -> return iterator
-const iter = gen();
-
-clear();
-log(Symbol.iterator in gen()); // true
-log(iter.next()); // yield 1 -> value 1
-log(iter.next()); // yield 2 -> value 2
-log(iter.next()); // return X -> value undefined
-
-// generator = iterable + iterator
-
-// custom iterable
-const iterationProtocolFunc = (function () {
-  let [pre, cur] = [0, 1];
-
-  return {
-    [Symbol.iterator]() {
-      return this;
-    },
-    next() {
-      [pre, cur] = [cur, pre + cur];
-
-      return { value: cur };
-    },
-  };
-})();
-
-for (const value of iterationProtocolFunc) {
-  if (value > 10) break;
-
-  log(value);
-}
-
-clear();
-
-const g = function* (max) {
-  let [pre, cur] = [0, 1];
-
-  while (1) {
-    [pre, cur] = [cur, pre + cur];
-
-    if (cur > max) return;
-
-    yield cur;
+    log({ id, name });
   }
-};
 
-const f = function () {
-  const iter = g(10);
-
-  log(iter.next());
-  log(iter.next());
-};
-
-f();
-
-// async
-function getUser(username) {
-  request("url" + username).then(
-    (user) => iter.next(user.name),
-    (e) => iter.throw(e)
-  );
+  //   const iter = gen();
+  //   iter.next().value.then((id) => iter.next(id).value.then((name) => iter.next(name)));
 }
 
-function* gen() {
-  try {
-    const value = yield getUser("jaehun");
+{
+  const getId = () => new Promise((resolve) => setTimeout(() => resolve(1), 1));
+  const getNameById = () => new Promise((resolve) => setTimeout(() => resolve("chris"), 1));
 
-    log(value);
-  } catch (e) {
-    log(e);
+  function* gen() {
+    const id = yield getId();
+    const name = yield getNameById();
+
+    return { id, name };
   }
+
+  const co = (gen) =>
+    new Promise((resolve) => {
+      const g = gen();
+
+      const onFulfilled = (res) => {
+        const { value, done } = g.next(res);
+
+        if (done) return resolve(value);
+
+        return value.then(onFulfilled);
+      };
+
+      onFulfilled();
+    });
+
+  co(gen).then(console.log);
 }
 
-const it = gen();
-it.next();
+{
+  function run(gen) {
+    var args = [].slice.call(arguments, 1);
+    var it;
+
+    it = gen.apply(this, args);
+
+    return Promise.resolve().then(function handleNext(value) {
+      var next = it.next(value);
+
+      return (function handleResult(next) {
+        if (next.done) return next.value;
+
+        return Promise.resolve(next.value).then(handleNext, function handleError(e) {
+          new Promise.resolve(it.throw(e)).then(handleResult);
+        });
+      })(next);
+    });
+  }
+
+  run(function* gen() {}).then(console.log);
+}

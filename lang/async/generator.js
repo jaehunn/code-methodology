@@ -1,6 +1,7 @@
 const log = console.log;
 const clear = console.clear;
 
+// 어떻게 하면
 // run-to-completion (no context change)
 {
   var x = 1;
@@ -513,4 +514,24 @@ const clear = console.clear;
   }
 
   run(f);
+}
+
+// generator delegation
+{
+  function* f() {
+    var v_2 = yield request("http://some.url.2");
+    var v_3 = yield request("http://some.url.3/?v=" + v_2);
+
+    return v_3;
+  }
+
+  function* g() {
+    var v_1 = yield request("http://some.url.1");
+
+    var v_3 = yield run(f);
+
+    log(v_3);
+  }
+
+  run(g);
 }

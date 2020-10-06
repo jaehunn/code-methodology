@@ -2,175 +2,42 @@ const log = console.log;
 const clear = console.clear;
 const error = console.error;
 
-// async
-// 1. gap
+// 비동기성 이해하기
+// 1. 간극과 콜백
+
+// 2. 동시성
+
+// 3. 잡 큐
+
+// 4. 콜백의 단점 (가독성, 보장성, 분기 불가성, 제어의 역전)
+
+// 프라미스
+// 1. 미랫값
+
+// 2. 재어의 재역전
+
+// 3. 데너블
+
+// 4. 프라미스 믿음성
+
+// 5. 프라미스 연쇄
+
+// 6. 프라미스 에러처리
+
+// 7. 프라미스 패턴
+
+// 제너레이터
+// 1. 이터러블, 이터레이터, 제너레이터
+
+// 2. 협동적 동시성과 메시징
+
+// 3. 제너레이터 비동기와 에러처리
+
+// 4. 제너레이터와 프라미스
+
+// 5. 제너레이터 위임
 {
-  function f() {
-    setTimeout(function cb() {
-      // A
-    }, 0);
-
-    // B
-  }
-
-  function g() {
-    // C
-  }
-
-  f();
-  g();
-
-  // B C A
 }
+// 6. 제너레이터 동시성
 
-clear();
-
-// 2. concurrency
-{
-  function f() {
-    setTimeout(function () {
-      log("receive");
-    }, 1000);
-  }
-
-  function g() {
-    setTimeout(function () {
-      log("receive");
-    }, 1000);
-  }
-}
-
-// 3. solve to race
-{
-  {
-    // if
-    function cb(res) {
-      if (res.url === "A") {
-        // ...
-      } else if (res.url === "B") {
-        // ...
-      }
-    }
-  }
-
-  // gate
-  {
-    let x, y;
-
-    function cb1(x) {
-      if (x && y) {
-        // ...
-      }
-    }
-
-    function cb2(y) {
-      if (x && y) {
-        //...
-      }
-    }
-  }
-
-  // latch
-  {
-    let x;
-
-    function cb1(x) {
-      if (!x) {
-        // ...
-      }
-    }
-
-    function cb2(x) {
-      if (!x) {
-        // ...
-      }
-    }
-  }
-
-  // scheduling
-  {
-    let data = [];
-
-    function cb(res) {
-      let chunk = res.splice(0, 1000);
-
-      // ...
-
-      if (res.length) {
-        setTimeout(function () {
-          cb(res);
-        });
-      }
-    }
-  }
-
-  // job queue
-  {
-    log("A");
-
-    setTimeout(function () {
-      log("B");
-    }, 0);
-
-    schedule(function () {
-      log("C");
-
-      schedule(function () {
-        log("D");
-      });
-    });
-
-    // A C D B
-  }
-}
-
-// callback problem
-// 1. readability
-{
-  A(function () {
-    B(function () {
-      C(function () {
-        D(function () {
-          // ...
-        });
-      });
-    });
-  });
-}
-
-// 2. async guarantee
-{
-  A(function () {
-    B();
-
-    C(function () {
-      D();
-    });
-
-    E();
-  });
-
-  F();
-}
-
-// 3. event branch
-{
-  A(function () {
-    B(function () {
-      // ...
-    });
-  });
-
-  C(function () {
-    D(function () {
-      // ...
-    });
-  });
-}
-
-// 4. reliability (IOC to third party)
-{
-  T("data", function () {
-    // ...
-  });
-}
+// 7. 썽크

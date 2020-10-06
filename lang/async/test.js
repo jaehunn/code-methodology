@@ -19,7 +19,7 @@ function* g() {
   try {
     yield* f();
   } catch (err) {
-    log(, err); // 3
+    log(err); // 3
   }
 
   yield "E";

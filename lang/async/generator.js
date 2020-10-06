@@ -688,3 +688,61 @@ const clear = console.clear;
 
   run(g); // run(f, 3)
 }
+
+// generator concurrency
+{
+  function response(data) {
+    if (data.url === "http:/some.url.1") res[0] = data;
+    else if (data.url === "http://osme.url.2") res[1] = data;
+  }
+
+  var res = [];
+  function* reqData(url) {
+    res.push(yield request(url));
+  }
+
+  var it1 = reqData("http://some.url.1");
+  var it2 = reqData("http://some.url.2");
+
+  var p1 = it1.next();
+  var p2 = it2.next();
+
+  p1.then(function (data) {
+    it1.next(data);
+
+    return p2;
+  }).then(function (data) {
+    it2.next(data);
+  });
+}
+
+{
+  var res = [];
+
+  function* reqData(url) {
+    var data = yield request(url);
+
+    yield;
+
+    res.push(data);
+  }
+
+  var it1 = reqData("http://some.url.1");
+  var it2 = reqData("http://some.url.2");
+
+  var p1 = it1.next();
+  var p2 = it2.next();
+
+  p1.then(function (data) {
+    it1.next(data);
+  });
+
+  p2.then(function (data) {
+    it2.next(data);
+  });
+
+  Promise.all([p1, p2]).then(function () {
+    it1.next();
+    it2.next();
+  });
+}

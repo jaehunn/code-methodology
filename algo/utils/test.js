@@ -1,4 +1,4 @@
-import { Comparator } from "../utils";
+import { Comparator } from ".";
 
 describe("Utils", () => {
   describe("Comparator", () => {

@@ -129,6 +129,94 @@ clear();
   }
 }
 
+clear();
+
 // property-descriptor
+{
+  // Object.getOwnPropertyDescriptor()
+  // Object.defineProperty()
+  const o = {
+    a: 1,
+  };
+
+  log(Object.getOwnPropertyDescriptor(o, "a")); // { value: 1, writable: true, enumerable: true, configurable: true }
+
+  Object.defineProperty(o, "a", {
+    value: 2,
+    writable: true,
+    configurable: true,
+    enumerable: true,
+  });
+
+  log(Object.getOwnPropertyDescriptor(o, "a")); // { value: 2, writable: true, enumerable: true, configurable: true }
+
+  // writable - value
+  // configurable - defineProperty()
+  // enumerable -
+
+  // immutability
+  // 1. constant
+  {
+    const o = {};
+    Object.defineProperty(o, "CONST_NUMBER", {
+      value: 10,
+      writable: false,
+      configurable: false,
+    });
+  }
+
+  // 2. Object.preventExtensions()
+  {
+    const o = {};
+    Object.preventExtensions(o);
+
+    o.a = 2;
+    log(o.a); // undefined
+  }
+
+  clear();
+
+  // 3. Object.seal()
+  {
+    const o = { a: 1 };
+    Object.seal(o);
+
+    o.b = 2;
+    log(o.b); // undefined
+
+    // Object.defineProperty() - X
+    o.a = 2;
+    log(o.a); // 2
+
+    delete o.a;
+    log(o.a); // 2
+  }
+
+  // 4. Object.freeze()
+  {
+    const foo = {
+      b: 2,
+    };
+
+    const o = {
+      a: 1,
+      foo,
+    };
+
+    Object.freeze(o);
+
+    o.a = 2;
+    log(o.a); // 1
+
+    // shallow
+    o.foo.b = 3;
+    log(o.foo.b); // 3
+
+    foo.b = 4;
+    log(foo.b); // 4
+  }
+}
+
+// getter and setter
 {
 }

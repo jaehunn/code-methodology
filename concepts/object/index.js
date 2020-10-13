@@ -219,4 +219,48 @@ clear();
 
 // getter and setter
 {
+  let o = {
+    a: 1,
+  };
+
+  // [[Get]] Operation
+  log(o.a); // success, 1
+  log(o.b); // failure, undefined
+
+  // identifier search failure - ReferenceError
+  // property search failure - undefined
+
+  // [[Put]] Operation
+  // 1. is Accessor Discriptor? (getter or setter)
+  // 2. writable: false -> TypeError
+  // 3. proprty setting
+
+  Object.defineProperty(o, "b", {
+    get: function () {
+      return this.a * 2;
+    },
+    enumerable: true,
+  });
+
+  log(o.b); // 2
+
+  o = {
+    get c() {
+      return 3;
+    },
+  };
+
+  log(o.c); // 3
+
+  const _o = {
+    get d() {
+      return this.d;
+    },
+    set d(v) {
+      this.d = v;
+    },
+  };
+
+  o.d = 4;
+  log(o.d); // 4
 }

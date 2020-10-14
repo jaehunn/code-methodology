@@ -1,6 +1,7 @@
 const log = console.log;
+const clear = console.clear;
 
-// 1. object prototype
+// object prototype
 {
   const o = {
     a: "a",
@@ -11,7 +12,7 @@ const log = console.log;
   log(Function.prototype.__proto__ === Object.prototype);
 }
 
-// 2. function prototype
+// function prototype
 {
   const F = function (a) {
     this.a = a;
@@ -24,7 +25,7 @@ const log = console.log;
   log(Function.prototype.__proto__ === Object.prototype);
 }
 
-// 3. constructor
+// constructor
 {
   const F = function (a) {
     this.a = a;
@@ -46,7 +47,7 @@ const log = console.log;
   log(F.constructor); // F() (prototype chain)
 }
 
-// 4. prototype property
+// prototype property
 {
   function F(a) {
     this.a = a;
@@ -61,7 +62,7 @@ const log = console.log;
   f.g(); // prototype method
 }
 
-// 5. prototype inheritance
+// prototype inheritance
 {
   function F(a) {
     this.a = a;
@@ -80,7 +81,7 @@ const log = console.log;
   log(_f.constructor); // Object() (constructor disconnected) (prototype chain)
 }
 
-// 6. prototype chain
+// prototype chain
 {
   function F(a) {
     this.a = a;
@@ -99,3 +100,45 @@ const log = console.log;
   log(_f.b); // '_b' (no prototype chain)
   log(f.b); // 'b'
 }
+
+clear();
+
+// class theory vs. delegation theory
+{
+  // class theory: interaction of instances
+  // delegation theory: connection of objects
+
+  const User = {
+    setId: function (id) {
+      this.id = id;
+    },
+    getId: function () {
+      return this.id;
+    },
+  };
+
+  // delegation: [[Prototype]] Link (Prototype Chaining)
+  const O = Object.create(User);
+
+  O.prepareTask = function (id, label) {
+    this.label = label;
+
+    this.setId(id); // id is O property, not User property
+  };
+
+  // Implicit binding: this = O -> O.id = 1
+  O.prepareTask(1, "user1");
+  log(O.hasOwnProperty("id")); // true
+  log(User.hasOwnProperty("id")); // false
+
+  // Do not override in delegation
+  O.getTasks = function () {
+    this.getId();
+
+    return this.label;
+  };
+
+  // JavaScript [[Prototype]]: No abstraction, Connection objects
+}
+
+// mental model

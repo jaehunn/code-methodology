@@ -152,7 +152,7 @@ clear();
 
   // writable - value
   // configurable - defineProperty()
-  // enumerable -
+  // enumerable -  for-in
 
   // immutability
   // 1. constant
@@ -263,4 +263,42 @@ clear();
 
   o.d = 4;
   log(o.d); // 4
+}
+
+clear();
+
+// Property check: in vs. hasOwnProperty()
+{
+  const o = {
+    a: 1,
+  };
+
+  log("a" in o); // true
+  log(o.hasOwnProperty("a")); // true
+
+  log("toString" in o); // true, Object.prototype.toString() "prototype chaining"
+
+  // good
+  log(Object.prototype.hasOwnProperty(o, "toString")); // false
+}
+
+// Property get keys: keys() vs. getOwnPropertyNames()
+{
+  const o = {};
+  Object.defineProperty(o, "a", {
+    value: 1,
+    enumerable: true,
+  });
+
+  Object.defineProperty(o, "b", {
+    value: 2,
+    enumerable: false,
+  });
+
+  log(o.propertyIsEnumerable("a")); // true
+  log(o.propertyIsEnumerable("b")); // false
+
+  // "no-prototype chaining"
+  log(Object.keys(o)); // ['a']
+  log(Object.getOwnPropertyNames(o)); // ['a', 'b']
 }

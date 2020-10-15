@@ -141,4 +141,123 @@ clear();
   // JavaScript [[Prototype]]: No abstraction, Connection objects
 }
 
+clear();
+
 // mental model
+{
+  // prototype style
+  {
+    function Foo(name) {
+      this.name = name;
+    }
+
+    Foo.prototype.identify = function () {
+      return `I am ${this.name}`;
+    };
+
+    function Bar(name) {
+      Foo.call(this, name);
+    }
+
+    // inheritance
+    Bar.prototype = Object.create(Foo.prototype);
+
+    Bar.prototype.speak = function () {
+      return `Hello, ${this.identify()}`;
+    };
+
+    const jimin = new Bar("jimin");
+    const jaehun = new Bar("jaehun");
+
+    log(jimin.speak()); // Hello, I am jimin
+    log(jaehun.speak()); // Hello, I am jaehun
+
+    // jimin, jaehun -> Bar.prototype -> Foo.prototype
+  }
+
+  // object style
+  {
+    Foo = {
+      init: function (name) {
+        this.name = name;
+      },
+      identify: function () {
+        return `I am ${this.name}`;
+      },
+    };
+
+    Bar = Object.create(Foo);
+
+    Bar.speak = function () {
+      return `Hello, ${this.identify()}`;
+    };
+
+    const jimin = Object.create(Bar);
+    jimin.init("jimin");
+
+    const jaehun = Object.create(Bar);
+    jaehun.init("jaehun");
+
+    log(jimin.speak()); // Hello, I am jimin
+    log(jaehun.speak()); // Hello, I am jaehun
+
+    // jimin, jaehun -> Bar -> Foo
+  }
+
+  // Object.setPrototypeOf()
+  {
+    const Foo = {};
+
+    const Bar = {};
+
+    Object.setPrototypeOf(Foo, Bar); // Foo -> Bar(parent)
+  }
+}
+
+// type instropection
+{
+  // instanceof
+  {
+    function Foo() {}
+
+    const foo = new Foo();
+
+    // foo -> Foo.prototype
+    log(foo instanceof Foo); // true: foo instanceof Foo.prototype
+
+    function Bar() {}
+
+    Bar.prototype = Object.create(Foo.prototype);
+
+    log(Bar.prototype instanceof Foo); // true
+    log(Object.getPrototypeOf(Bar.prototype) === Foo.prototype); // true
+    log(Foo.prototype.isPrototypeOf(Bar.prototype)); // true
+
+    const bar = new Bar();
+
+    log(bar instanceof Foo); // true
+    log(bar instanceof Bar); // true
+    log(Object.getPrototypeOf(bar) === Bar.prototype); // true
+    log(Foo.prototype.isPrototypeOf(bar)); // true
+    log(Bar.prototype.isPrototypeOf(bar)); // true
+
+    log(Bar instanceof Foo); // false
+  }
+
+  // duck-typing -> bad instropection (thenable in promise)
+  clear();
+  // object style instropection
+  {
+    const Foo = {};
+
+    const Bar = Object.create(Foo);
+
+    const bar = Object.create(Bar);
+
+    log(Foo.isPrototypeOf(Bar)); // true
+    log(Object.getPrototypeOf(Bar) === Foo); // true
+    log(Object.getPrototypeOf(bar) === Bar); // true
+    log(Foo.isPrototypeOf(bar)); // true
+    log(Bar.isPrototypeOf(bar)); // true
+  }
+}

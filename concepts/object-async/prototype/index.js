@@ -103,7 +103,7 @@ const clear = console.clear;
 
 clear();
 
-// class theory vs. delegation theory
+// class vs. object
 {
   // class theory: interaction of instances
   // delegation theory: connection of objects

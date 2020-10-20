@@ -195,7 +195,65 @@ clear();
   log(e === f); // true
   log(Number.isSafeInteger(e)); // false
   log(Number.isSafeInteger(f - 1)); // true
+
+  // NaN
+  let g = 2 / "foo"; // NaN
+  let h = 2 / "foo"; // NaN
+  log(g === h); // false
+
+  log(isNaN(g), isNaN(h)); // true, true
+
+  let i = "bar";
+  log(isNaN(i)); // true
+  log(Number.isNaN(i)); // false
+
+  log(Object.is(g, h)); // true
+
+  // Infinity
+  let j = 1 / 0; // infinity
+  let k = -1 / 0; // -infinity
+
+  log(j === Number.POSITIVE_INFINITY); // true
+  log(k === Number.NEGATIVE_INFINITY); // true
+
+  let l = Number.MAX_VALUE;
+  log(l + l); // Infinity
+
+  // ?
+  log(Math.pow(2, 969) <= l); // true
+  log(l <= Math.pow(2, 970)); // false
+  log(Math.pow(2, 969) <= l <= Math.pow(2, 970)); // true
+
+  log(l + Math.pow(2, 970)); // Infinity (close to Infinity: round up)
+  log(l + Math.pow(2, 969)); // 1.7976931348623157e+308 (close to Math.MAX_VALUE: round down)
+
+  log(j / k); // NaN
+  log(10 / j); // 0
+
+  // zero
+  let m = 0 / -3; // -0
+
+  log(m); // -0
+  log(m.toString(), m + "", String(m), JSON.stringify(m)); // 0 0 0 0
+
+  let n = "-0";
+  log(+n, Number(n), JSON.parse(n)); // -0 -0 -0
+
+  let o = 0;
+  log(m == o, m === o); // true true
+  log(o > m); // false
+
+  function isNegZero(n) {
+    n = Number(n);
+
+    // divide zero -> infinity
+    return n === 0 && 1 / n === -Infinity;
+  }
+
+  log(Object.is(o, m)); // false
 }
+
+clear();
 
 // null, undefined
 {

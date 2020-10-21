@@ -257,10 +257,84 @@ clear();
 
 // null, undefined
 {
+  // null = declare -> empty
+  // undefined = undeclare
+  // void ? -> return undefined
+  let a = 10;
+
+  log(void a, a); // undefined 10 (immutable)
+
+  function foo() {
+    return void setTimeout(function () {
+      // ...
+    }, 100);
+  }
+
+  // same foo
+  function bar() {
+    setTimeout(function () {}, 100);
+
+    return;
+  }
 }
 
 // value vs. reference
 {
+  let a = 1;
+  let b = a;
+
+  b += 1;
+  log(a, b); // 1, 2
+
+  let c = [1, 2, 3];
+  let d = c;
+
+  c.push(4);
+  log(c, d); // [1 ,2 ,3, 4] [1, 2, 3, 4]
+
+  // c -> [1, 2, 3, 4]
+  // d -> [1, 2, 3, 4]
+  // not c = [1, 2, 3, 4] / d = [1, 2, 3, 4]
+
+  d = [4, 5, 6];
+  log(c, d); // [1 ,2 ,3, 4] [4, 5, 6]
+
+  function foo(arr) {
+    arr.push(5);
+
+    arr = [4, 5, 6];
+    arr.push(7);
+
+    log(arr); // [4, 5, 6, 7]
+  }
+
+  foo(c);
+
+  log(c); // [1, 2, 3, 4, 5]
+
+  // c -> [1, 2, 3, 4]
+  // arr -> [4, 5, 6, 7]
+
+  function bar(arr) {
+    arr.length = 0; // mutable
+
+    log(arr);
+  }
+
+  bar(c); // []
+  log(c); // []
+
+  // value(= primitive, scala)
+  function baz(v) {
+    v += 1; // 'f' unboxing
+
+    log(v); // 1 + 1
+  }
+
+  let e = new Number(1);
+
+  baz(e);
+  log(e); // [Number: 1]
 }
 
 // native

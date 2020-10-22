@@ -337,8 +337,114 @@ clear();
   log(e); // [Number: 1]
 }
 
+clear();
 // native
+{
+  log(Object.prototype.toString.call([1, 2, 3])); // [object Array]
+  log(Object.prototype.toString.call(/regexp/i)); // [object RegExp]
 
-// coercion
+  // primitive type
+  log(Object.prototype.toString.call(null)); // [object NULL]
+  log(Object.prototype.toString.call(undefined)); // [object Undefined]
 
-// syntax
+  // boxing
+  log(Object.prototype.toString.call("abc")); // [object String]
+  log(Object.prototype.toString.call(42)); // [object Number]
+  log(Object.prototype.toString.call(true)); // [object Boolean]
+
+  // bad
+  new String("abc");
+  new Number(42);
+
+  // good
+  ("abc");
+  42;
+
+  // truthy
+  let a = new Boolean(false); // object is 'truthy'
+  if (!a) log("not work");
+
+  // passive boxing
+  let b = Object("abc"); // == new String('abc')
+
+  log(b instanceof String); // true
+  log(typeof b); // object
+  log(Object.prototype.toString.call(b)); // [object String]
+
+  // unboxing
+  log(a.valueOf()); // false
+  log(b.valueOf()); // abc
+
+  // Array()
+  {
+    let a = new Array(1, 2, 3); // == new Array(1, 2, 3), [1, 2, 3]
+    let b = [1, 2, 3];
+
+    let c = new Array(3); // presize
+    log(c.length); // 3
+
+    // chrome, c: [ undefined x 3 ]
+
+    let d = Array(3);
+    let e = [undefined, undefined, undefined];
+
+    d.join("-");
+    e.join("-");
+
+    d.map(function (v, i) {
+      return i;
+    });
+
+    e.map(function (v, i) {
+      return i;
+    });
+
+    log(d); // [ <3 empty items> ], join works, but map does not work
+    log(e); // [ undefined, undefined, undefined ]
+
+    // empty array vs. undefined array
+
+    let f = Array.apply(null, { length: 3 }); // { length: 3 } is array-like
+    log(f); // [ undefined, undefined, undefined ]
+
+    // do not create empty array
+  }
+
+  // Object()
+
+  // bad
+  new Object();
+
+  // good
+  {
+    a: 1;
+  }
+
+  // Function()
+  // != eval()
+
+  // RegExp()
+  /^a*b+/g;
+
+  let name = "jae";
+  let namePattern = new RegExp(name + "hun", "g");
+
+  // Date(), Error()
+  // have not literal format
+
+  log(Date.now() === new Date().getTime()); // 1603363170525, true
+  log(Date()); // Thu Oct 22 2020 19:39:11 GMT+0900 (GMT+09:00)
+
+  function foo() {
+    throw new Error("get current execution stack information");
+  }
+
+  // Symbol()
+  // do not prepend to 'new'
+  // symbol is not object, but scala(= primitive)
+
+  let g = Symbol("my_symbol");
+  log(g); // Symbol(my_symbol)
+  log(typeof g); // symbol
+  log(g.toString()); // Symbol(my_symbol)
+}

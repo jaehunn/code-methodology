@@ -103,6 +103,105 @@ const clear = console.clear;
 }
 
 clear();
+
 // explicit coercion
 {
+  {
+    // string, number (not create wrapper object, no new keyword)
+    let a = 42;
+    let b = String(a);
+
+    let c = "3.14";
+    let d = Number(c);
+
+    let e = c.toString();
+    let f = +b;
+
+    log(typeof e, typeof f); // string, number
+
+    // toString(): 42 -> boxing -> coerci
+    // +(unary operation): operand -> number
+
+    log(+new Date("Sat, 24 Oct 2020 19:40:00 CDT")); // 1603586400000
+    log(new Date().getTime()); // prefer
+    log(Date.now()); // prefer
+  }
+
+  // tilde(~)
+  {
+    // ToInt32 Abstract Operation
+    // "string": ToNumber() -> ToInt32
+    // "number": ToInt32
+    // ToInt32: |, ~, & bit operator
+
+    // NOOP: 0 | x
+    log(0 | NaN); // 0
+    log(0 | Infinity); // 0
+
+    // ~: ToInt32 -> NOT operation
+    // ~: x -> -(x - 1)
+    // ~: two's complement = one's complement + 1 = -x + 1
+    let a = 1;
+    log(~a); // -2
+
+    let b = 7;
+    log(~b); // -8
+
+    // -(x - 1) = 0, x = 1(sentinel value)
+    let c = "abcde";
+    if (~c.indexOf("f")) {
+      // -1 -> false, otherwise true
+      log("never");
+    }
+
+    // bit truncate: double tilde
+
+    log(Math.floor(-49.6)); // -50 (round down)
+    log(~~-49.6); // -49 (truncate)
+
+    log(Math.round(49.7)); // 50 (round up)
+    log(~~49.7); // 49
+
+    log(0 | 49.6); // 49
+
+    // operation precedence
+    // "~~x" > "0 | x"
+
+    // / > |
+    log(123 | (0 / 10)); // 123
+
+    // prefer to tilde
+  }
+
+  // parsing
+  {
+    log(Number("42")); // 42
+    log(parseInt("42")); // 42
+
+    log(Number("42px")); // NaN
+    log(parseInt("42px")); // 42, don't replace "coercion"
+
+    log(parseInt(1 / 0, 19)); // 18, 1 / 0 -> "Infinity"(radix 19, i = 18, n = out of radix)
+
+    // parseInt([string])
+  }
+
+  // * -> boolean
+  {
+    // Boolean(falsy) -> false
+    // Boolean(truthy) -> true
+    // == !! (double negate)
+
+    let a = 0;
+
+    // if() -> implicit coercion
+    if (!a) {
+      log("!a is true");
+    }
+
+    let b = a ? true : false; // implicit coercion
+    log(b); // false
+
+    // prefer: Boolean(x) or !!x
+  }
 }

@@ -205,3 +205,130 @@ clear();
     // prefer: Boolean(x) or !!x
   }
 }
+
+clear();
+// implicit
+{
+  // code abstraction -> derease bolierplate, verbosity of code
+  // "+" operation overload
+  {
+    log("1" + "0"); // 10 concatenation
+    log(42 + 0); // 42 addition
+
+    let a = [1, 2];
+    let b = [3, 4];
+    log(a + b); // 1,23,4
+
+    // + algorithm
+    // 1. opperand: string -> concatenate
+    // 2. operrand: object -> ToPrimitive -> context: number -> ToNumber -> valueOf? -> toString()
+    // 3. operrand: etc -> add
+
+    // "+" is commutative: 2 + 3 === 3 + 2
+
+    // number -> string
+    {
+      let c = 42;
+      log(42 + ""); // valueOf() -> ToString
+      log(String(42)); // toString()
+
+      let d = {
+        valueOf: function () {
+          return 42;
+        },
+        toString: function () {
+          return 4;
+        },
+      };
+
+      log(d + ""); // 42
+      log(String(d)); // 4
+    }
+
+    // string -> number
+    {
+      let e = "3.14" - 0;
+      log(e); // 3.14
+      log(typeof e); // number
+
+      let f = "3.14" / 0;
+      let g = "3.14" * 0;
+
+      log(f, typeof f); // Infinity number
+      log(g, typeof g); // 0 number
+
+      let h = [3] - [1];
+      log(h, typeof h); // 2 number, toString() -> toNumber
+    }
+
+    // boolean -> number
+    {
+      // true: 1
+      // false: 0
+
+      function foo() {
+        let sum = 0;
+        for (let i = 0; i < arguments.length; i += 1) {
+          if (arguments[i] !== undefined && !isNaN(arguments[i]))
+            sum += arguments[i];
+          // sum += Number(!!arguments[i])
+        }
+
+        return sum;
+      }
+
+      log(foo(true, false, false, false)); // 1
+      log(foo(true, true, true, true)); // 4
+
+      log(!!NaN); // false
+      log(!!undefined); // false
+      log(!!null); // false
+      log(null + 0); // 0
+      log(NaN + 0); // NaN
+      log(undefined + 0); // NaN
+    }
+  }
+
+  // * -> boolean
+  {
+    // ToBoolean
+    // 1. if(*)
+    // 2. for (; *; )
+    // 3. while (*), do-while(*)
+    // 4. * ? x : y
+    // 5. * || x or * && x
+
+    // || and && are selector operator (resolve one side)
+    log(1 || "a"); // 1
+    log(1 && "a"); // a
+
+    log(null && "a"); // null
+    log(null || "a"); // a
+
+    // first operand -> ToBoolean
+    // a || b === a ? a : b
+    // a && b === a ? b : a
+
+    // || : first operand: falsy -> true
+    log("" || "a"); // a
+    log(undefined && "a"); // undefiend
+    // using ? :
+
+    // && : guart operator: short circuiting
+    log({} && 1); // 1
+    log([] && 2); // 2
+    log(true && 3); // 3
+  }
+
+  // symbol
+  {
+    let s = Symbol("symbol");
+    log(String(s)); // symbol
+    // log(s + ""); // TypeError:
+
+    if (Boolean(s)) log("explicit ok"); // explicit ok
+    if (s) log("implicit ok"); // implicit ok
+  }
+}
+
+// equals: loose(==) vs. strict(===)

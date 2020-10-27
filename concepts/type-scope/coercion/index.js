@@ -331,4 +331,63 @@ clear();
   }
 }
 
+clear();
 // equals: loose(==) vs. strict(===)
+{
+  // ==: coercion
+  // ===: no-coercion
+
+  let same = 1 + 1;
+  let diff = "1" + 1;
+
+  log(typeof same); // number
+  log(typeof diff); // string(: coercion)
+
+  // x: number == y: string -> x == ToNumber(y)
+  log(1 == "1"); // true
+
+  // x: string == y: number -> ToNumber(x) == y
+  log("0" == 0); // true
+
+  // x: boolean == y -> ToNumber(x) == y
+  log(true == "2"); // false
+
+  // x == y: boolean -> x == ToNumber(y)
+  log("0" == false); // true
+
+  // no-intervention ToBoolean()
+
+  // bad: == true or == false
+  // good: === true or === false
+
+  // x: null == y: undefined -> true
+  // x: undefined == y: null -> true
+
+  // same: if (a == null), if (a == undefined || a == null)
+  let a = undefined;
+  if (a == null) log("a is undefined");
+
+  // x: string or number == y: object -> x == ToPrimitive(y)
+  log("1" + []); // 1 + "" -> "1"
+
+  // x; object == y: string or number -> ToPrimitive(x) == y
+  log({} + 1); // "[object Object]" + 1 -> "[object Object]1"
+
+  log(42 == [42]); // 42 == "42" -> 42 == 42 -> true
+
+  // unboxing
+  log("a" == Object("a")); // "a" == "a" -> true
+  log("a" === Object("a")); // false
+
+  // null, undefined -> can't boxing
+  // NaN -> boxing, but unique value
+  log(null == Object(null)); // false, Object(null) = Object()
+  log(undefined == Object(undefined)); // false, Object(undefined) = Object()
+  log(NaN == Object(NaN)); // fals, Object(NaN) = new Number(NaN)
+}
+
+clear();
+
+// caution case
+{
+}

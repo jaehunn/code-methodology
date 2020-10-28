@@ -386,8 +386,32 @@ clear();
   log(NaN == Object(NaN)); // fals, Object(NaN) = new Number(NaN)
 }
 
-clear();
+// 1. operand is true or false -> do not '==' operation
+// 2. operand is [] or " ", 0 -> do not "==" operaiton
 
-// caution case
+// abstract relational comparison (no-strict -> can't prevent implicit coercion)
 {
+  // not string -> ToNumber()
+  log([42] < ["43"]); // true
+  log(["43"] > [42]); // true
+
+  // all string -> lexicographic
+  log(["42"] < ["043"]); // false, compare "4", "0" -> compare "2", "4"
+  // "4" > "0" -> false
+
+  log([4, 2] < [0, 4, 3]); // same (lexicographic)
+
+  let a = { k: 1 };
+  let b = { k: 1 };
+
+  log(a < b); // false, [object Object], [object Object] (can't compare)
+  log(a > b); // false
+  log(a == b); // false
+
+  // but
+  log(a >= b); // true, reverse result of a < b
+  log(a <= b); // true, reverse result of a > b
+
+  // good (explicit coercion, before compare)
+  log(Number([42]) < Number("043")); // true
 }

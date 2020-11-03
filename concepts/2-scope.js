@@ -1,7 +1,16 @@
 const log = console.log;
 const clear = console.clear;
 
-// 1. Default binding
+// 1. Scope
+{
+}
+
+// 2. Closure
+{
+}
+
+// 3. this
+// default binding
 {
   function f() {
     log(this.a); // this = global object
@@ -12,7 +21,7 @@ const clear = console.clear;
   f(); // global
 }
 
-// 2. Implicit binding
+// implicit binding
 {
   function f() {
     log(this.a); // this = o object
@@ -26,7 +35,7 @@ const clear = console.clear;
   o.f(); // a
 }
 
-// 3. Explicit binding
+// explicit binding
 {
   function f() {
     log(this.a); // this = o object
@@ -41,7 +50,7 @@ const clear = console.clear;
   f.call(o); // a
 }
 
-// 4. Hard binding
+// hard binding
 {
   function f() {
     log(this.a);
@@ -58,7 +67,7 @@ const clear = console.clear;
   g(); // 2
 }
 
-// 5. new binding
+// new binding
 {
   function F(a) {
     // 1. this = o
@@ -77,7 +86,7 @@ const clear = console.clear;
   _o.f(); // a
 }
 
-// 6. Priority: Implicit < Explicit
+// priority: Implicit < Explicit
 {
   function f() {
     log(this.a);
@@ -96,7 +105,7 @@ const clear = console.clear;
   o.f.call(_o); // _a
 }
 
-// 7. Priority: Implicit < new
+// priority: Implicit < new
 {
   function f(a) {
     this.a = a;
@@ -114,7 +123,7 @@ const clear = console.clear;
   log(_o.a); // _a
 }
 
-// 8. Priority: Explicit < new
+// priority: Explicit < new
 {
   function f(a) {
     this.a = a;
@@ -133,7 +142,7 @@ const clear = console.clear;
 
 // Conclusion: new > explicit > implicit > default
 
-// 9. Exception: Explicit(this = null) -> this = global
+// exception: Explicit(this = null) -> this = global
 {
   // bad
   function f() {
@@ -150,7 +159,7 @@ const clear = console.clear;
   f.call(ø);
 }
 
-// 10. Exception: Arrow Function this (Static binding)
+// exception: Arrow Function this (Static binding)
 {
   function f() {
     // f this inheritance

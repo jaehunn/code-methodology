@@ -2,7 +2,7 @@ const log = console.log;
 
 // 연극을 외주받아 공연을 진행하는 극단이 있다.
 // 극단에 공연 요청이 들어오면, 장르와 관객의 규모를 판단해서 비용을 책정한다.
-// 공연료와 포인트가 명시된 영수증을 발급한다. (포인트로 다음 공연료를 할인받을 수 있다.)
+// 공연료와 적립포인트가 명시된 영수증을 발급한다. (포인트로 다음 공연료를 할인받을 수 있다.)
 {
   const { invoice, plays } = require("./data.js");
 
@@ -57,7 +57,7 @@ const log = console.log;
           throw new Error(`알 수 없는 장르: ${play.type}`);
       }
 
-      // 포인트
+      // 적립 포인트
       volumeCredit += Math.max(perf.audience - 30, 0);
 
       if ("comedy" === play.type) volumeCredit += Math.floor(perf.audience / 5);
@@ -218,41 +218,519 @@ const log = console.log;
 
     return result;
 
+    function amountFor(aPerformance) {
+      let result = 0;
+
+      switch (playFor(aPerformance).type) {
+        case "tragedy":
+          result = 40000;
+
+          if (aPerformance.audience > 30) {
+            result += 1000 * (aPerformance.audience - 30);
+          }
+
+        case "comedy":
+          result = 30000;
+
+          if (aPerformance.audience > 20) {
+            result += 10000 + 500 * (aPerformance.audience - 20);
+          }
+
+          result += 300 * aPerformance.audience;
+
+          break;
+
+        default:
+          throw new Error(`알 수 없는 장르: ${playFor(aPerformance).type}`);
+      }
+
+      return result;
+    }
+
     function playFor(aPerformance) {
       return plays[aPerformance.playID];
     }
-  }
-
-  function amountFor(aPerformance) {
-    let result = 0;
-
-    switch (playFor(aPerformance).type) {
-      case "tragedy":
-        result = 40000;
-
-        if (aPerformance.audience > 30) {
-          result += 1000 * (aPerformance.audience - 30);
-        }
-
-      case "comedy":
-        result = 30000;
-
-        if (aPerformance.audience > 20) {
-          result += 10000 + 500 * (aPerformance.audience - 20);
-        }
-
-        result += 300 * aPerformance.audience;
-
-        break;
-
-      default:
-        throw new Error(`알 수 없는 장르: ${playFor(aPerformance).type}`);
-    }
-
-    return result;
   }
 }
 
 // playFor() 함수를 많이 조회한 것에 대한 성능 우려보다 지역변수를 제거해 개선하기 쉬워졌다는 것이 더 중요하다.
 
-// ...
+// 적립 포인트 로직 추출하기
+{
+  function statement(invoice, plays) {
+    let totalAmount = 0;
+    let volumeCredit = 0;
+    let result = `청구 내역 (고객명: ${invoice.customer})\n`;
+
+    const format = new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      minimumFractionDigits: 2,
+    }).format;
+
+    for (let perf of invoice.performances) {
+      volumeCredits += volumeCreditsFor(perf); // * 반복문을 돌때마다 값을 누적해야하므로 함수 안에서 새로운 값을 반환하는 식으로 작성해야한다.
+
+      result += `${playFor(perf).name} ${format(amountFor(perf) / 100)} (${perf.audience}석)\n`;
+      totalAmount += amountFor(perf);
+    }
+
+    result += `총액: ${format(totalAmount / 100)}\n`;
+    result += `적립 포인트: ${volumeCredit}점\n`;
+
+    return result;
+
+    function amountFor(aPerformance) {
+      let result = 0;
+
+      switch (playFor(aPerformance).type) {
+        case "tragedy":
+          result = 40000;
+
+          if (aPerformance.audience > 30) {
+            result += 1000 * (aPerformance.audience - 30);
+          }
+
+        case "comedy":
+          result = 30000;
+
+          if (aPerformance.audience > 20) {
+            result += 10000 + 500 * (aPerformance.audience - 20);
+          }
+
+          result += 300 * aPerformance.audience;
+
+          break;
+
+        default:
+          throw new Error(`알 수 없는 장르: ${playFor(aPerformance).type}`);
+      }
+
+      return result;
+    }
+
+    function volumeCreditsFor(perf) {
+      let result = 0; // * 변수이름 명확히하기
+
+      result += Math.max(perf.audience - 30, 0);
+
+      if ("comedy" === playFor(perf).type) result += Math.floor(perf.audience / 5);
+
+      return result;
+    }
+
+    function playFor(aPerformance) {
+      return plays[aPerformance.playID];
+    }
+  }
+}
+
+// 임시변수(코드의 format 변수) 를 제거하고, 함수로 빼기
+// 임시변수는 자신이 속한 로직에서만 의미가 있으므로 독립시킬 필요가 있다.
+
+{
+  function statement(invoice, plays) {
+    let totalAmount = 0;
+    let volumeCredit = 0;
+    let result = `청구 내역 (고객명: ${invoice.customer})\n`;
+
+    for (let perf of invoice.performances) {
+      volumeCredits += volumeCreditsFor(perf); // * 반복문을 돌때마다 값을 누적해야하므로 함수 안에서 새로운 값을 반환하는 식으로 작성해야한다.
+
+      result += `${playFor(perf).name} ${usd(amountFor(perf) / 100)} (${perf.audience}석)\n`;
+      totalAmount += amountFor(perf);
+    }
+
+    result += `총액: ${usd(totalAmount / 100)}\n`;
+    result += `적립 포인트: ${volumeCredit}점\n`;
+
+    return result;
+
+    function amountFor(aPerformance) {
+      let result = 0;
+
+      switch (playFor(aPerformance).type) {
+        case "tragedy":
+          result = 40000;
+
+          if (aPerformance.audience > 30) {
+            result += 1000 * (aPerformance.audience - 30);
+          }
+
+        case "comedy":
+          result = 30000;
+
+          if (aPerformance.audience > 20) {
+            result += 10000 + 500 * (aPerformance.audience - 20);
+          }
+
+          result += 300 * aPerformance.audience;
+
+          break;
+
+        default:
+          throw new Error(`알 수 없는 장르: ${playFor(aPerformance).type}`);
+      }
+
+      return result;
+    }
+
+    function volumeCreditsFor(perf) {
+      let result = 0; // * 변수이름 명확히하기
+
+      result += Math.max(perf.audience - 30, 0);
+
+      if ("comedy" === playFor(perf).type) result += Math.floor(perf.audience / 5);
+
+      return result;
+    }
+
+    function playFor(aPerformance) {
+      return plays[aPerformance.playID];
+    }
+
+    // * 함수이름을 함수의 핵심기능으로 정의하면 좋다.
+    // * 함수변수를 만드는 것도 좋지만, 쓰이는 방식을 고려해볼때, 파라미터로 값을 받아 / 100 까지 적용하는 로직으로 만들면 더 좋을 것 같다.
+    function usd(aNumber) {
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 2,
+      }).format(aNumber / 100);
+    }
+  }
+}
+
+// volumeCredits 변수
+{
+  function statement(invoice, plays) {
+    let totalAmount = 0;
+    let result = `청구 내역 (고객명: ${invoice.customer})\n`;
+
+    // volumeCredits 는 루프마다 값을 누적해서 리팩터링하는 것이 까다롭다.
+    // * for 문을 쪼개보자.
+
+    for (let perf of invoice.performances) {
+      result += `${playFor(perf).name} ${usd(amountFor(perf) / 100)} (${perf.audience}석)\n`;
+      totalAmount += amountFor(perf);
+    }
+
+    // let volumeCredit = 0; // * 변수를 선언하는 문장을 반복문 앞으로 옮긴다.
+    // for (let perf of invoice.performances) {
+    //   volumeCredits += volumeCreditsFor(perf);
+    // }
+
+    // 값을 갱신하는 문장들을 한곳에 모으면 임시변수를 질의함수로 바꾸기가 수월해진다.
+    // let volumeCredit = totalVolumeCredits();
+
+    result += `총액: ${usd(totalAmount / 100)}\n`;
+    result += `적립 포인트: ${totalVolumeCredits()}점\n`; // * 변수 인라인하기
+
+    return result;
+
+    function totalVolumeCredits() {
+      let volumeCredits = 0;
+
+      for (let perf of invoice.performances) {
+        volumeCredits += volumeCreditsFor(perf);
+      }
+    }
+
+    function amountFor(aPerformance) {
+      let result = 0;
+
+      // *
+      switch (aPerformance.play.type) {
+        case "tragedy":
+          result = 40000;
+
+          if (aPerformance.audience > 30) {
+            result += 1000 * (aPerformance.audience - 30);
+          }
+
+        case "comedy":
+          result = 30000;
+
+          if (aPerformance.audience > 20) {
+            result += 10000 + 500 * (aPerformance.audience - 20);
+          }
+
+          result += 300 * aPerformance.audience;
+
+          break;
+
+        default:
+          throw new Error(`알 수 없는 장르: ${aPerformance.play.type}`);
+      }
+
+      return result;
+    }
+
+    function volumeCreditsFor(perf) {
+      let result = 0;
+
+      result += Math.max(perf.audience - 30, 0);
+
+      if ("comedy" === playFor(perf).type) result += Math.floor(perf.audience / 5);
+
+      return result;
+    }
+
+    function playFor(aPerformance) {
+      return plays[aPerformance.playID];
+    }
+
+    function usd(aNumber) {
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 2,
+      }).format(aNumber / 100);
+    }
+  }
+}
+
+// volumeCreidts 리팩토링 절차
+// 1. 반복문을 쪼개기
+// 2. 문장 모으기
+// 3. 함수로 빼내기
+// 4. 인라인 변수로 적용하기
+
+// 위와 같은 방식으로 totalAmount 임시변수 제거하기
+{
+  function statement(invoice, plays) {
+    let result = `청구 내역 (고객명: ${invoice.customer})\n`;
+
+    for (let perf of invoice.performances) {
+      result += `${playFor(perf).name} ${usd(amountFor(perf) / 100)} (${perf.audience}석)\n`;
+    }
+
+    result += `총액: ${usd(totalAmount() / 100)}\n`;
+    result += `적립 포인트: ${totalVolumeCredits()}점\n`; // * 변수 인라인하기
+
+    return result;
+
+    // * totalAmount 리팩터링
+    function totalAmount() {
+      let result = 0;
+
+      for (let perf of invoice.performances) {
+        result += amountFor(perf);
+      }
+
+      return result;
+    }
+
+    function totalVolumeCredits() {
+      let result = 0;
+
+      for (let perf of invoice.performances) {
+        result += volumeCreditsFor(perf);
+      }
+
+      return result;
+    }
+
+    function volumeCreditsFor(aPerformance) {
+      let result = 0;
+
+      result += Math.max(aPerformance.audience - 30, 0);
+
+      if ("comedy" === playFor(aPerformance).type) result += Math.floor(aPerformance.audience / 5);
+
+      return result;
+    }
+
+    function playFor(aPerformance) {
+      return plays[aPerformance.playID];
+    }
+
+    function usd(aNumber) {
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 2,
+      }).format(aNumber / 100);
+    }
+  }
+}
+
+// 지금까지 살펴본 잘개쪼개는 작업은 리팩토링 초기단계에서 진행된다.
+// 다음은 앞에서 언급한 HTML 코드를 만드는 기능을 살펴보자
+// 현재 statement() 는 문자열을 반환하는 함수로 작성되어있다. 이때 HTML 버전의 statement() 로 바꾸기 위해 모든 분리된 함수들을 복사붙여넣기를 하고 싶지않다. 어떻게 해야할까?
+
+// 이를 해결할 수 있는 방법은 단계를 쪼개는 것이다. 필요한 데이터를 처리하는 로직과 문자열 또는 HTML 버전을 만드는 로직으로 둘로 나누는 것이다.
+// 두번째 단계의 문자열, HTML 버전으로 만드는 로직을 함수로 뽑아내야하는데 그 로직은 statement() 함수 전체가 된다.
+{
+  function statement(invoice, plays) {
+    const statementData = {}; // * 중간 데이터 구조를 만들었다. renderPlainText 에서 계산하는 로직을 첫번째 로직으로 뽑아내고 이 중간데이터로 두번째 로직에 전달하면 될 것이다.
+
+    statementData.customer = invoice.customer;
+    // statementData.performances = invoice.performances;
+    statementData.performances = enrichPerformance(invoice.performances); // * performances 객체를 복사해서 새롭개 설정하자. 복사를 하지않고 가변적으로 참조하면 금방 상하기 때문에 조심해야한다.
+    statementData.totalAmount = totalAmount(statementData);
+    statementData.totalVolumeCredits = totalVolumeCredits(statementData);
+
+    return renderPlainText(statementData, plays);
+
+    function enrichPerformance(aPerformance) {
+      const result = Object.assign({}, aPerformance); // 얕은 복사 수행
+
+      // * 중간데이터에 계산 결과를 설정한다.
+      result.play = playFor(result);
+      result.amount = amountFor(result);
+      result.volumeCredits = volumeCreditsFor(result);
+
+      return result;
+    }
+
+    // * 반복문을 파이프라인으로 바꾸기
+    function totalAmount(data) {
+      return data.performances.reduce((total, performance) => total + performance.amount, 0);
+    }
+
+    function totalVolumeCredits(data) {
+      return data.performances.reduce((total, performance) => total + performance.volumeCredit, 0);
+    }
+
+    // * 연극의 제목을 알아내는 playFor 를 statement() 내로 이동시키고, 중간데이터 구조에 추가한다. 이후 중간데이터 구조에 설정한 연극 제목을 renderPlainText() 에서 사용하도록 하자.
+    function playFor(aPerformance) {
+      return plays[aPerformance.playID];
+    }
+
+    function volumeCreditsFor(aPerformance) {
+      let result = 0;
+
+      result += Math.max(aPerformance.audience - 30, 0);
+
+      // *
+      if ("comedy" === aPerformance.play.type) result += Math.floor(aPerformance.audience / 5);
+
+      return result;
+    }
+  }
+
+  // * 두번째 단계의 로직을 함수로 뽑아냈다. 첫번째 단계에서 만들어진 결과물을 두번째 단계에서 사용하도록 중간 데이터 구조를 생성해야한다.
+  // * 중간 데이터에 invoice 의 데이터를 저장해서 invoice 를 따로 넘길 필요가 없다.
+  function renderPlainText(data, plays) {
+    let result = `청구 내역 (고객명: ${data.customer})\n`;
+
+    // * 중간데이터에 playFor() 를 적용시켰기 때문에 그대로 사용할 수 있다.
+    for (let perf of data.performances) {
+      result += `${perf.name} ${usd(perf.amount / 100)} (${perf.audience}석)\n`;
+    }
+
+    result += `총액: ${data.totalAmount() / 100}\n`;
+    result += `적립 포인트: ${data.totalVolumeCredits()}점\n`; // * 변수 인라인하기
+
+    return result;
+
+    function usd(aNumber) {
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 2,
+      }).format(aNumber / 100);
+    }
+  }
+}
+
+// 첫단계 로직인 데이터 처리부분을 함수로 추출한다.
+{
+  function statement(invoice, plays) {
+    return renderPlainText(createStatementData(invoice, plays));
+  }
+
+  // * 계산하는 로직(createStatementData())을 공통적으로 사용할 수 있게 됬다.
+  function htmlStatement(invoice, plays) {
+    return renderHtml(createStatementData(invoice, plays));
+  }
+
+  // renderHtml() 도 usd 를 사용할 수 있도록 스코프를 위로 올렸다.
+  function usd(aNumber) {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      minimumFractionDigits: 2,
+    }).format(aNumber / 100);
+  }
+
+  function renderPlainText(data, plays) {
+    let result = `청구 내역 (고객명: ${data.customer})\n`;
+
+    // * 중간데이터에 playFor() 를 적용시켰기 때문에 그대로 사용할 수 있다.
+    for (let perf of data.performances) {
+      result += `${perf.name} ${usd(perf.amount / 100)} (${perf.audience}석)\n`;
+    }
+
+    result += `총액: ${data.totalAmount() / 100}\n`;
+    result += `적립 포인트: ${data.totalVolumeCredits()}점\n`; // * 변수 인라인하기
+
+    return result;
+  }
+
+  function renderHtml(data) {
+    let result = `<h1>청구 내역 (고객명: ${data.customer})</h1>\n`;
+
+    result += "<table>\n";
+    result += "<tr><th>연극</th><th>좌석 수</th><th>금액</th></tr>";
+
+    for (let perf of data.performances) {
+      result += `<tr><td>${perf.play.name}</td><td>(${perf.audience}석)</td>`;
+      result += `<td>${usd(perf.amount)}</td></tr>\n`;
+    }
+
+    result += "</table>";
+    result += `<p>총액: <em>${usd(data.totalAmount)}</em></p>\n`;
+    result += `<p>적립 포인트: <em>${data.totalVolumeCredits}</em>점</p>\n`;
+
+    return result;
+  }
+
+  function createStatementData(invoice, plays) {
+    const result = {}; // * 변수명 바꾸기
+
+    result.customer = invoice.customer;
+    result.performances = enrichPerformance(invoice.performances);
+    result.totalAmount = totalAmount(result);
+    result.totalVolumeCredits = totalVolumeCredits(result);
+
+    return result; // * 중간 데이터를 반환한다.
+
+    function enrichPerformance(aPerformance) {
+      const result = Object.assign({}, aPerformance);
+
+      result.play = playFor(result);
+      result.amount = amountFor(result);
+      result.volumeCredits = volumeCreditsFor(result);
+
+      return result;
+    }
+
+    function totalAmount(data) {
+      return data.performances.reduce((total, performance) => total + performance.amount, 0);
+    }
+
+    function totalVolumeCredits(data) {
+      return data.performances.reduce((total, performance) => total + performance.volumeCredit, 0);
+    }
+
+    function playFor(aPerformance) {
+      return plays[aPerformance.playID];
+    }
+
+    function volumeCreditsFor(aPerformance) {
+      let result = 0;
+
+      result += Math.max(aPerformance.audience - 30, 0);
+
+      if ("comedy" === aPerformance.play.type) result += Math.floor(aPerformance.audience / 5);
+
+      return result;
+    }
+  }
+}
+
+// 다형성을 활용해서 계산 로직을 재구성하기
+{
+}

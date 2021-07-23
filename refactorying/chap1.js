@@ -510,6 +510,36 @@ const log = console.log;
 
     return result;
 
+    function amountFor(aPerformance) {
+      let result = 0;
+
+      // *
+      switch (aPerformance.play.type) {
+        case "tragedy":
+          result = 40000;
+
+          if (aPerformance.audience > 30) {
+            result += 1000 * (aPerformance.audience - 30);
+          }
+
+        case "comedy":
+          result = 30000;
+
+          if (aPerformance.audience > 20) {
+            result += 10000 + 500 * (aPerformance.audience - 20);
+          }
+
+          result += 300 * aPerformance.audience;
+
+          break;
+
+        default:
+          throw new Error(`알 수 없는 장르: ${aPerformance.play.type}`);
+      }
+
+      return result;
+    }
+
     // * totalAmount 리팩터링
     function totalAmount() {
       let result = 0;
@@ -572,6 +602,36 @@ const log = console.log;
     statementData.totalVolumeCredits = totalVolumeCredits(statementData);
 
     return renderPlainText(statementData, plays);
+
+    function amountFor(aPerformance) {
+      let result = 0;
+
+      // *
+      switch (aPerformance.play.type) {
+        case "tragedy":
+          result = 40000;
+
+          if (aPerformance.audience > 30) {
+            result += 1000 * (aPerformance.audience - 30);
+          }
+
+        case "comedy":
+          result = 30000;
+
+          if (aPerformance.audience > 20) {
+            result += 10000 + 500 * (aPerformance.audience - 20);
+          }
+
+          result += 300 * aPerformance.audience;
+
+          break;
+
+        default:
+          throw new Error(`알 수 없는 장르: ${aPerformance.play.type}`);
+      }
+
+      return result;
+    }
 
     function enrichPerformance(aPerformance) {
       const result = Object.assign({}, aPerformance); // 얕은 복사 수행
@@ -707,6 +767,36 @@ const log = console.log;
       return result;
     }
 
+    function amountFor(aPerformance) {
+      let result = 0;
+
+      // *
+      switch (aPerformance.play.type) {
+        case "tragedy":
+          result = 40000;
+
+          if (aPerformance.audience > 30) {
+            result += 1000 * (aPerformance.audience - 30);
+          }
+
+        case "comedy":
+          result = 30000;
+
+          if (aPerformance.audience > 20) {
+            result += 10000 + 500 * (aPerformance.audience - 20);
+          }
+
+          result += 300 * aPerformance.audience;
+
+          break;
+
+        default:
+          throw new Error(`알 수 없는 장르: ${aPerformance.play.type}`);
+      }
+
+      return result;
+    }
+
     function totalAmount(data) {
       return data.performances.reduce((total, performance) => total + performance.amount, 0);
     }
@@ -732,5 +822,203 @@ const log = console.log;
 }
 
 // 다형성을 활용해서 계산 로직을 재구성하기
+// amountFor() 함수를 보면 장르마다 계산 방식을 다르게 처리하고 있다. 이런 형태의 조건부 로직은 늘어나면 골칫거리가 된다.
+// 조건부 로직을 명확히하는 방법은 많지만, 여기서는 OOP 의 특성인 다형성을 활용할 것이다.
+
+// 상속을 사용해서 희극 서브클래스, 비극 서브클래스가 각자의 구체적인 계산 로직을 정의하는 것이다.
+// 이때 희극, 비극의 버전에 따라 계산 로직이 언어적 차원에서 연결된다.
+
+// 상속계층부터 정의하자. 공연료와 적립포인트를 계산하는 함수를 담을 클래스가 필요하다.
+
+// * 앞에서 출력로직을 따로 분리해서 계산로직에만 신경쓰면 된다.
+// 중간 데이터 구조를 완성하는 enrichPerformance() 함수를 보면, amountFor() 와 volumeCreditsFor() 를 호출해 공연료와 적립 포인트를 계산한다.
+// 이 두 함수를 전용 클래스로 옮기는 작업이 지금 해야할 목표다.
 {
+  function enrichPerformance(aPerformance) {
+    // * // 생성자 파라미터를 함수선언으로 바꾸자.
+    const calculator = new PerformanceCalculator(aPerformance, playFor(aPerformance));
+
+    const result = Object.assign({}, aPerformance);
+
+    result.play = calculator.play;
+    result.amount = amountFor(result);
+    result.volumeCredits = volumeCreditsFor(result);
+
+    return result;
+  }
+
+  // 클래스에 기능을 추가해보자. 연극 레코드 기능은 사실 다형성에 별다른 차이가 없지만, 데이터 변환을 클래스에서 처리한다는 점에서 코드가 명확해진다.
+  class PerformanceCalculator {
+    constructor(aPerformance, aPlay) {
+      this.performance = aPerformance;
+      this.play = aPlay;
+    }
+  }
 }
+
+// 다음은 함수 옮기기 작업을 진행할 것이다.
+{
+  function enrichPerformance(aPerformance) {
+    // * // 생성자 파라미터를 함수선언으로 바꾸자.
+    const calculator = new PerformanceCalculator(aPerformance, playFor(aPerformance));
+
+    const result = Object.assign({}, aPerformance);
+
+    result.play = calculator.play;
+    result.amount = calculator.amount;
+    result.volumeCredits = calculator.volumeCredits;
+
+    return result;
+  }
+
+  // * amountFor() 가 계산기 Performance 클래스를 이용하도록 한다.
+  function amountFor(aPerformance) {
+    return new Perforamance(aPerformance, playFor(aPerformance)).amount;
+  }
+
+  // * 마찬가지로 적용한다.
+  function volumeCreditsFor(aPerformance) {
+    return new Performance(aPerformance, playFor(aPerformance)).volumeCredits;
+  }
+
+  class PerformanceCalculator {
+    constructor(aPerformance, aPlay) {
+      this.performance = aPerformance;
+      this.play = aPlay;
+    }
+
+    get amount() {
+      let result = 0;
+
+      switch (this.play.type) {
+        case "tragedy":
+          result = 40000;
+
+          if (this.audience > 30) {
+            result += 1000 * (this.audience - 30);
+          }
+
+        case "comedy":
+          result = 30000;
+
+          if (this.audience > 20) {
+            result += 10000 + 500 * (this.audience - 20);
+          }
+
+          result += 300 * this.audience;
+
+          break;
+
+        default:
+          throw new Error(`알 수 없는 장르: ${this.play.type}`);
+      }
+
+      return result;
+    }
+
+    get volumeCredits() {
+      let result = 0;
+
+      result += Math.max(this.performance.audience - 30, 0);
+
+      if ("comedy" === this.play.type) result += Math.floor(this.performance.audience / 5);
+
+      return result;
+    }
+  }
+}
+
+// 클래스에 로직을 담았으니 다형성을 지원하도록 만들어보자. (타입 코드를 서브 클래스로 바꾸기)
+// PerformanceCalculator 서브 클래스를 준비하고 createStatementData() 에서 적합한 서브 클래스를 사용하도록 만들어야한다.
+// 그에 맞는 서브 클래스를 사용하려면 생성자 대신에 함수를 호출하도록 바꿔야한다.
+// 왜냐하면, JS 에서는 서브 클래스의 인스턴스를 반환할 수 없기 때문이다.
+{
+  function enrichPerformance(aPerformance) {
+    // 생성자 대신해 팩터리 함수를 사용하기
+    const calculator = createPerformanceCalculator(aPerformance, playFor(aPerformance));
+
+    const result = Object.assign({}, aPerformance);
+
+    result.play = calculator.play;
+    result.amount = calculator.amount;
+    result.volumeCredits = calculator.volumeCredits;
+
+    return result;
+  }
+
+  // 팩터리 함수를 사용하면, 어떤 서브 클래스의 인스턴스를 반환할 지를 선택할 수 있다.
+  function createPerformanceCalculator(aPerformance, aPlay) {
+    switch (aPlay.type) {
+      case "tragedy":
+        return new TragedyCalculator(aPerformance, aPlay);
+      case "comedy":
+        return new ComedyCalculator(aPerformance, aPlay);
+      default:
+        throw new Error(`알 수 없는 장르: ${aPlay.type}`);
+    }
+  }
+
+  class PerformanceCalculator {
+    constructor(aPerformance, aPlay) {
+      this.performance = aPerformance;
+      this.play = aPlay;
+    }
+
+    get amount() {
+      throw new Error(`서브 클래스에서 처리하게 됩니다.`);
+    }
+
+    // 적립 포인트 계산 로직의 경우 일반적인 경우가 많으므로, 예외적인 케이스의 로직은 서브 클래스에서 오버라이드 하는 식의 방법이 좋다.
+    get volumeCredits() {
+      return Math.max(this.performance.audience - 30, 0);
+    }
+  }
+
+  // 자연스럽게 서브 클래스에 PerformanceCalculator 의 로직이 오버라이드 되지만, 확실하게 하기 위해 다음과 같이 작설할 수 있다.
+  class TragedyCalculator extends PerformanceCalculator {
+    constructor() {
+      super();
+    }
+
+    get amount() {
+      let result = 40000;
+
+      if (this.audience > 30) {
+        result += 1000 * (this.audience - 30);
+      }
+
+      return result;
+    }
+  }
+
+  class ComedyCalculator extends PerformanceCalculator {
+    constructor() {
+      super();
+    }
+
+    get amount() {
+      let result = 30000;
+
+      if (this.audience > 20) {
+        result += 10000 + 500 * (this.audience - 20);
+      }
+
+      result += 300 * this.audience;
+
+      return result;
+    }
+
+    get volumeCredits() {
+      return super.volumeCredits + Math.floor(this.performance.audience / 5);
+    }
+  }
+}
+
+// 이제 새로운 장르에 대해서는 서브 클래스를 새로 만들고 createPerformanceCalculator() 에 추가하기만 하면 된다.
+// 서브 클래스의 사용은 amountFor() 나 volumeCreditsFor() 같이 같은 타입의 다형성을 기반으로 실행되는 함수가 많으면 생각해보는 것이 좋다.
+
+// 다뤄본 리팩토링 기법
+// 1. 함수 추출
+// 2. 변수 인라인
+// 3. 함수 옮기기
+// 4. 조건부 로직을 다형성으로 바꾸기
